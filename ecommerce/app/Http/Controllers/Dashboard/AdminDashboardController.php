@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactInquiry;
+use App\Models\Content;
 use App\Models\Course;
 use App\Models\Order;
 use App\Models\Product;
@@ -21,7 +22,12 @@ class AdminDashboardController extends Controller
             'ordersCount' => Order::count(),
             'coursesCount' => Course::count(),
             'workshopsCount' => Workshop::count(),
-            'openInquiries' => ContactInquiry::where('status', 'new')->count(),
+            'contentCount' => Content::count(),
+            'inquiriesCount' => ContactInquiry::count(),
+            'recentOrders' => Order::with('user')->latest()->take(8)->get(),
+            'recentInquiries' => ContactInquiry::latest()->take(8)->get(),
+            'lowStockProducts' => Product::where('stock', '<=', 5)->where('is_active', true)->latest()->take(8)->get(),
+            'upcomingWorkshops' => Workshop::where('starts_at', '>=', now())->orderBy('starts_at')->take(8)->get(),
         ]);
     }
 }

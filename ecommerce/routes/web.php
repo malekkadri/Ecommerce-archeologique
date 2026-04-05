@@ -10,6 +10,7 @@ use App\Http\Controllers\Dashboard\VendorDashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\MarketplaceController;
+use App\Http\Controllers\Marketplace\OrderController;
 use App\Http\Controllers\WorkshopController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,11 +36,19 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::middleware('auth')->group(function () {
     Route::post('/courses/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
     Route::post('/workshops/book', [WorkshopController::class, 'book'])->name('workshops.book');
+    Route::post('/cart', [OrderController::class, 'storeCartItem'])->name('cart.store');
+    Route::patch('/cart/{cartItem}', [OrderController::class, 'updateCartItem'])->name('cart.update');
+    Route::delete('/cart/{cartItem}', [OrderController::class, 'destroyCartItem'])->name('cart.destroy');
+    Route::get('/cart', [OrderController::class, 'cart'])->name('cart.index');
+    Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout.index');
+    Route::post('/checkout', [OrderController::class, 'placeOrder'])->name('checkout.place');
+    Route::get('/orders/{order}/confirmation', [OrderController::class, 'confirmation'])->name('orders.confirmation');
 
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', [UserDashboardController::class, 'index'])->name('index');
         Route::get('/courses', [CourseController::class, 'myCourses'])->name('courses');
         Route::get('/bookings', [WorkshopController::class, 'history'])->name('bookings');
+        Route::get('/orders', [UserDashboardController::class, 'orders'])->name('orders');
     });
 });
 

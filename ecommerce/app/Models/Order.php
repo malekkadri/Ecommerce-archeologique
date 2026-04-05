@@ -9,7 +9,23 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'reference', 'status', 'payment_status', 'subtotal', 'total', 'currency'];
+    protected $fillable = [
+        'user_id',
+        'reference',
+        'status',
+        'payment_status',
+        'subtotal',
+        'total',
+        'currency',
+        'billing_name',
+        'billing_email',
+        'billing_phone',
+        'billing_address',
+        'shipping_name',
+        'shipping_phone',
+        'shipping_address',
+        'notes',
+    ];
     protected $casts = ['subtotal' => 'decimal:2', 'total' => 'decimal:2'];
 
     public function user() { return $this->belongsTo(User::class); }

@@ -12,9 +12,9 @@ MIDA is a bilingual (French/English) Laravel platform combining editorial cultur
 ## Architecture overview
 ### Areas
 - **Public area**: home, about, content, courses, workshops, marketplace, contact.
-- **User area**: account dashboard, my courses, booking history.
-- **Vendor area**: vendor dashboard, product management.
-- **Admin area**: dashboard and module management screens.
+- **User area**: account dashboard, my courses, booking history, order history.
+- **Vendor area**: vendor dashboard, product management with search/pagination.
+- **Admin area**: KPI dashboard + module management screens.
 
 ### Role model
 - `user`
@@ -63,6 +63,12 @@ Role checks use Gates + middleware (`can:vendor-area`, `can:admin-area`, `role:*
 After seeding:
 - Admin: `admin@mida.tn` / `password`
 - Vendor: `vendor@mida.tn` / `password`
+
+## Marketplace flow
+- Authenticated users can add marketplace products to cart, update quantities, remove items, and checkout.
+- Checkout captures billing/shipping details and places an order in a DB transaction.
+- Order items are persisted and product stock is decremented on successful placement.
+- Users can review order confirmation and full order history from dashboard.
 
 ## Notes for Laravel 9
 If upgrading base dependencies to Laravel 9, this code structure remains compatible (no PHP 8.1-only syntax used).

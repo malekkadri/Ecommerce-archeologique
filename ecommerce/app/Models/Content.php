@@ -11,7 +11,6 @@ class Content extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = ['author_id', 'category_id', 'title', 'slug', 'excerpt', 'body', 'type', 'featured_image', 'is_featured', 'published_at'];
-
     protected $casts = ['is_featured' => 'boolean', 'published_at' => 'datetime'];
 
     public function author()
@@ -27,5 +26,10 @@ class Content extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    public function favorites()
+    {
+        return $this->morphMany(Favorite::class, 'favoritable');
     }
 }

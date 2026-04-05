@@ -26,6 +26,13 @@
                 </div>
             </div>
 
+
+            <div class="rounded-xl bg-sand/60 p-4 text-sm">
+                <p class="font-semibold">{{ __('messages.payment_method') }}</p>
+                <p class="mt-1">{{ __('messages.cash_on_delivery') }}</p>
+                <p class="text-charcoal/70 mt-1">{{ __('messages.cod_note') }}</p>
+            </div>
+
             <div>
                 <textarea name="notes" rows="3" class="w-full rounded-lg border px-3 py-2" placeholder="{{ __('messages.order_notes') }}">{{ old('notes') }}</textarea>
             </div>

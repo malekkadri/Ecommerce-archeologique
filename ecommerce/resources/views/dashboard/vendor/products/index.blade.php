@@ -1,0 +1,2 @@
+@extends('layouts.app')
+@section('content')<section class="max-w-6xl mx-auto px-4 py-12"><a class="bg-olive text-white px-3 py-2 rounded" href="{{ route('vendor.products.create') }}">{{ __('messages.add_product') }}</a><div class="mt-5 space-y-2">@foreach($products as $product)<div class="bg-white p-4 rounded-xl flex justify-between"><span>{{ $product->name }}</span><a href="{{ route('vendor.products.edit',$product) }}">{{ __('messages.edit') }}</a></div>@endforeach</div></section>@endsection

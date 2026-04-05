@@ -21,6 +21,9 @@
             <a href="{{ route('courses.index') }}">{{ __('messages.nav_courses') }}</a>
             <a href="{{ route('workshops.index') }}">{{ __('messages.nav_workshops') }}</a>
             <a href="{{ route('marketplace.index') }}">{{ __('messages.nav_marketplace') }}</a>
+            @auth
+                <a href="{{ route('cart.index') }}">{{ __('messages.cart') }}</a>
+            @endauth
             <a href="{{ route('about') }}">{{ __('messages.nav_about') }}</a>
             <a href="{{ route('contact.create') }}">{{ __('messages.nav_contact') }}</a>
         </nav>

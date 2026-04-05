@@ -13,7 +13,23 @@ class Course extends Model
     protected $fillable = ['category_id', 'title', 'slug', 'summary', 'description', 'level', 'price', 'is_published', 'is_featured'];
     protected $casts = ['is_published' => 'boolean', 'is_featured' => 'boolean', 'price' => 'decimal:2'];
 
-    public function category() { return $this->belongsTo(Category::class); }
-    public function lessons() { return $this->hasMany(Lesson::class)->orderBy('position'); }
-    public function enrollments() { return $this->hasMany(Enrollment::class); }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class)->orderBy('position');
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function favorites()
+    {
+        return $this->morphMany(Favorite::class, 'favoritable');
+    }
 }

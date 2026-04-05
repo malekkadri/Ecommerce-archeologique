@@ -14,7 +14,7 @@
 </head>
 <body class="bg-[#FAF7F2] text-charcoal min-h-screen flex flex-col">
 <header class="border-b border-sand bg-white/90 backdrop-blur">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
         <a href="{{ route('home') }}" class="text-2xl font-semibold tracking-wide text-deepred">MIDA</a>
         <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
             <a href="{{ route('contents.index') }}">{{ __('messages.nav_content') }}</a>
@@ -23,6 +23,7 @@
             <a href="{{ route('marketplace.index') }}">{{ __('messages.nav_marketplace') }}</a>
             @auth
                 <a href="{{ route('cart.index') }}">{{ __('messages.cart') }}</a>
+                <a href="{{ route('favorites.index') }}">{{ __('messages.my_favorites') }}</a>
             @endauth
             <a href="{{ route('about') }}">{{ __('messages.nav_about') }}</a>
             <a href="{{ route('contact.create') }}">{{ __('messages.nav_contact') }}</a>
@@ -30,11 +31,27 @@
         <div class="flex items-center gap-2 text-xs">
             <a class="px-2 py-1 rounded {{ app()->getLocale() === 'fr' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'fr') }}">FR</a>
             <a class="px-2 py-1 rounded {{ app()->getLocale() === 'en' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'en') }}">EN</a>
+            @auth
+                @if(auth()->user()->isAdmin())
+                    <a class="px-2 py-1 rounded bg-charcoal text-white" href="{{ route('admin.dashboard') }}">{{ __('messages.admin_dashboard') }}</a>
+                @elseif(auth()->user()->isVendor())
+                    <a class="px-2 py-1 rounded bg-charcoal text-white" href="{{ route('vendor.dashboard') }}">{{ __('messages.vendor_dashboard') }}</a>
+                @else
+                    <a class="px-2 py-1 rounded bg-charcoal text-white" href="{{ route('dashboard.index') }}">{{ __('messages.user_dashboard') }}</a>
+                @endif
+                <form method="POST" action="{{ route('logout') }}">@csrf<button class="px-2 py-1 rounded bg-sand">{{ __('messages.logout') }}</button></form>
+            @else
+                <a class="px-2 py-1 rounded bg-sand" href="{{ route('login') }}">{{ __('messages.login') }}</a>
+                <a class="px-2 py-1 rounded bg-charcoal text-white" href="{{ route('register') }}">{{ __('messages.register') }}</a>
+            @endauth
         </div>
     </div>
 </header>
 
 <main class="flex-1">
+    @if($errors->any())
+        <div class="max-w-7xl mx-auto mt-4 px-4"><div class="bg-deepred text-white px-4 py-3 rounded-xl">{{ $errors->first() }}</div></div>
+    @endif
     @if(session('success'))<div class="max-w-7xl mx-auto mt-4 px-4"><div class="bg-olive text-white px-4 py-3 rounded-xl">{{ session('success') }}</div></div>@endif
     @if(session('error'))<div class="max-w-7xl mx-auto mt-4 px-4"><div class="bg-deepred text-white px-4 py-3 rounded-xl">{{ session('error') }}</div></div>@endif
     @yield('content')

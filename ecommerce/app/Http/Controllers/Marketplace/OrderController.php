@@ -138,6 +138,7 @@ class OrderController extends Controller
                     'reference' => 'MIDA-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
                     'status' => 'confirmed',
                     'payment_status' => 'pending',
+                    'payment_method' => 'cash_on_delivery',
                     'subtotal' => $subtotal,
                     'total' => $subtotal,
                     'currency' => 'TND',

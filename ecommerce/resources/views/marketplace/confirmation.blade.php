@@ -6,6 +6,7 @@
         <h1 class="text-3xl font-semibold">{{ __('messages.order_confirmation') }}</h1>
         <p class="mt-2 text-charcoal/70">{{ __('messages.order_reference') }}: <span class="font-semibold">{{ $order->reference }}</span></p>
         <p class="text-charcoal/70">{{ __('messages.order_status') }}: {{ ucfirst($order->status) }}</p>
+        <p class="text-charcoal/70">{{ __('messages.payment_method') }}: {{ __('messages.cash_on_delivery') }}</p>
 
         <div class="mt-6">
             <h2 class="text-lg font-semibold mb-3">{{ __('messages.order_items') }}</h2>

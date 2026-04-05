@@ -14,6 +14,7 @@ class Order extends Model
         'reference',
         'status',
         'payment_status',
+        'payment_method',
         'subtotal',
         'total',
         'currency',

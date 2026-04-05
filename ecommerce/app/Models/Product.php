@@ -13,6 +13,18 @@ class Product extends Model
     protected $fillable = ['vendor_profile_id', 'category_id', 'name', 'slug', 'description', 'price', 'stock', 'sku', 'is_featured', 'is_active'];
     protected $casts = ['price' => 'decimal:2', 'is_featured' => 'boolean', 'is_active' => 'boolean'];
 
-    public function vendorProfile() { return $this->belongsTo(VendorProfile::class); }
-    public function category() { return $this->belongsTo(Category::class); }
+    public function vendorProfile()
+    {
+        return $this->belongsTo(VendorProfile::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function favorites()
+    {
+        return $this->morphMany(Favorite::class, 'favoritable');
+    }
 }

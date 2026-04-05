@@ -9,6 +9,13 @@
     </p>
 
     @auth
+<form method="POST" action="{{ route('favorites.toggle') }}" class="mt-3">@csrf
+    <input type="hidden" name="type" value="product"> 
+    <input type="hidden" name="id" value="{{ $product->id }}"> 
+    <button class="text-sm text-deepred">{{ __('messages.toggle_favorite') }}</button>
+</form>
+@endauth
+@auth
         <form action="{{ route('cart.store') }}" method="POST" class="mt-6 bg-white rounded-2xl p-4 flex items-end gap-3 max-w-md">
             @csrf
             <input type="hidden" name="product_id" value="{{ $product->id }}">

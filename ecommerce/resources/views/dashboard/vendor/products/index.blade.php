@@ -17,6 +17,7 @@
             <table class="min-w-full text-sm">
                 <thead class="bg-sand/60">
                     <tr>
+                        <th class="px-4 py-3 text-left">Image</th>
                         <th class="px-4 py-3 text-left">{{ __('messages.name') }}</th>
                         <th class="px-4 py-3 text-left">SKU</th>
                         <th class="px-4 py-3 text-left">{{ __('messages.price') }}</th>
@@ -28,6 +29,13 @@
                 <tbody>
                     @foreach($products as $product)
                         <tr class="border-t border-sand/70">
+                            <td class="px-4 py-3">
+                                <div class="h-12 w-12 rounded-md overflow-hidden bg-sand/40">
+                                    @if($product->image_url)
+                                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
+                                    @endif
+                                </div>
+                            </td>
                             <td class="px-4 py-3">{{ $product->name }}</td>
                             <td class="px-4 py-3">{{ $product->sku ?: '—' }}</td>
                             <td class="px-4 py-3">{{ number_format($product->price, 2) }} TND</td>

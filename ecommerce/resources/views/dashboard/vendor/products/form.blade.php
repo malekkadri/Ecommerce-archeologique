@@ -1,5 +1,5 @@
 <section class="max-w-3xl mx-auto px-4 py-12">
-    <form method="post" action="{{ $action }}" class="bg-white p-6 rounded-2xl space-y-4">
+    <form method="post" action="{{ $action }}" enctype="multipart/form-data" class="bg-white p-6 rounded-2xl space-y-4">
         @csrf
         @if($method==='PUT') @method('PUT') @endif
 
@@ -13,6 +13,15 @@
         <input name="slug" class="w-full border rounded px-3 py-2" placeholder="slug" value="{{ old('slug',optional($product)->slug) }}">
         <input name="sku" class="w-full border rounded px-3 py-2" placeholder="SKU" value="{{ old('sku',optional($product)->sku) }}">
         <textarea name="description" class="w-full border rounded px-3 py-2" rows="4" placeholder="{{ __('messages.description') }}">{{ old('description',optional($product)->description) }}</textarea>
+
+        <div>
+            <label class="block text-sm text-charcoal/80 mb-2">Product image</label>
+            <input type="file" name="image" accept="image/*" class="w-full border rounded px-3 py-2">
+            @if(optional($product)->image_url)
+                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="mt-3 h-28 w-28 rounded-lg object-cover border">
+            @endif
+        </div>
+
         <div class="grid md:grid-cols-2 gap-3">
             <input name="price" class="w-full border rounded px-3 py-2" placeholder="{{ __('messages.price') }}" value="{{ old('price',optional($product)->price) }}">
             <input name="stock" class="w-full border rounded px-3 py-2" placeholder="{{ __('messages.stock') }}" value="{{ old('stock',optional($product)->stock) }}">

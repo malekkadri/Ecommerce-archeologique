@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -36,7 +37,13 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        Product::create($request->validated() + [
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
+
+        Product::create($data + [
             'vendor_profile_id' => auth()->user()->vendorProfile->id,
             'is_active' => $request->boolean('is_active', true),
         ]);
@@ -56,13 +63,27 @@ class ProductController extends Controller
     public function update(StoreProductRequest $request, Product $product)
     {
         $this->authorize('update', $product);
-        $product->update($request->validated());
+
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            if ($product->image_path) {
+                Storage::disk('public')->delete($product->image_path);
+            }
+
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
+
+        $product->update($data);
         return back()->with('success', __('messages.updated'));
     }
 
     public function destroy(Product $product)
     {
         $this->authorize('delete', $product);
+        if ($product->image_path) {
+            Storage::disk('public')->delete($product->image_path);
+        }
         $product->delete();
         return back()->with('success', __('messages.deleted'));
     }

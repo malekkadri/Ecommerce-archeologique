@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-@include('components.front.page-header', ['title' => __('messages.my_orders')])
+@include('components.front.page-header', ['title' => __('messages.my_orders'), 'subtitle' => 'Track status, references, and totals with full clarity.'])
 <section class="max-w-6xl mx-auto px-4 py-8 space-y-6">
     @include('components.front.dashboard-nav')
 
     @if($orders->isEmpty())
-        @include('components.front.empty-state', ['title' => __('messages.no_orders_yet')])
+        @include('components.front.empty-state', ['title' => __('messages.no_orders_yet'), 'subtitle' => 'Once you place an order, confirmation and status updates will appear here.'])
     @else
         <div class="fo-table-wrap">
             <table class="min-w-full text-sm">

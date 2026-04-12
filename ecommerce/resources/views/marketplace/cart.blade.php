@@ -4,14 +4,14 @@
 @include('components.front.page-header', [
     'kicker' => __('messages.cart'),
     'title' => __('messages.cart'),
-    'subtitle' => __('messages.order_summary'),
+    'subtitle' => 'Review your selections with full pricing transparency before checkout.',
     'actions' => $cartItems->isNotEmpty() ? '<a href="'.route('checkout.index').'" class="fo-btn fo-btn-primary">'.__('messages.proceed_checkout').'</a>' : null,
 ])
 <section class="max-w-6xl mx-auto px-4 py-8">
     @if($cartItems->isEmpty())
         @include('components.front.empty-state', [
             'title' => __('messages.empty_cart'),
-            'subtitle' => __('messages.quick_access_desc'),
+            'subtitle' => 'Your cart is ready when you are. Explore curated products to build your practical setup.',
             'action' => '<a href="'.route('marketplace.index').'" class="fo-btn fo-btn-primary">'.__('messages.nav_marketplace').'</a>'
         ])
     @else
@@ -39,10 +39,10 @@
                     </div>
                 @endforeach
             </div>
-            <aside class="fo-panel p-5 sticky top-24 space-y-3">
+            <aside class="fo-panel p-5 sticky top-24 space-y-4">
                 <p class="text-sm text-charcoal/70">{{ __('messages.subtotal') }}</p>
                 <p class="text-3xl font-semibold text-deepred">{{ number_format($subtotal, 2) }} TND</p>
-                <p class="text-xs text-charcoal/65">Secure checkout, clear totals, no hidden fees.</p>
+                @include('components.front.reassurance-list', ['items' => ['No hidden fees.', 'Review and edit quantity before payment.', 'Confirmation and order tracking after checkout.']])
                 <a href="{{ route('checkout.index') }}" class="w-full fo-btn fo-btn-primary">{{ __('messages.proceed_checkout') }}</a>
             </aside>
         </div>

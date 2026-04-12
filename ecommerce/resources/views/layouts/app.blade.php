@@ -68,6 +68,15 @@
             background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
             border-radius: 1rem;
         }
+        .fo-proof-item { border: 1px solid rgba(47,42,40,.08); border-radius: .9rem; background: #fff; padding: .8rem .9rem; }
+        .fo-proof-value { font-size: 1.35rem; font-weight: 700; color: #2F2A28; line-height: 1.1; }
+        .fo-proof-label { margin-top: .2rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: rgba(47,42,40,.62); }
+        .fo-reassurance { border: 1px solid rgba(95,111,82,.22); background: rgba(95,111,82,.07); border-radius: .95rem; padding: .85rem 1rem; }
+        .fo-callout { border: 1px solid rgba(201,106,74,.2); background: rgba(201,106,74,.08); border-radius: 1rem; padding: 1rem 1.1rem; }
+        .fo-readable > * + * { margin-top: 1rem; }
+        .fo-readable h2, .fo-readable h3 { line-height: 1.28; color: #2F2A28; font-weight: 620; margin-top: 1.6rem; }
+        .fo-readable ul { padding-left: 1.1rem; list-style: disc; }
+        .fo-readable blockquote { border-left: 3px solid rgba(201,106,74,.55); padding-left: .9rem; color: rgba(47,42,40,.76); font-style: italic; }
 
         .fo-table-wrap { overflow-x: auto; border: 1px solid rgba(47,42,40,.1); border-radius: 1rem; background: #fff; }
 
@@ -83,12 +92,12 @@
         <a href="{{ route('home') }}" class="text-2xl font-semibold tracking-wide text-deepred">MIDA</a>
         <button class="md:hidden fo-btn fo-btn-secondary !px-3 !py-2" @click="open = !open">Menu</button>
         <nav class="hidden md:flex items-center gap-5 text-sm font-medium">
-            <a href="{{ route('contents.index') }}" class="hover:text-deepred transition-colors">{{ __('messages.nav_content') }}</a>
-            <a href="{{ route('courses.index') }}" class="hover:text-deepred transition-colors">{{ __('messages.nav_courses') }}</a>
-            <a href="{{ route('workshops.index') }}" class="hover:text-deepred transition-colors">{{ __('messages.nav_workshops') }}</a>
-            <a href="{{ route('marketplace.index') }}" class="hover:text-deepred transition-colors">{{ __('messages.nav_marketplace') }}</a>
-            <a href="{{ route('about') }}" class="hover:text-deepred transition-colors">{{ __('messages.nav_about') }}</a>
-            <a href="{{ route('contact.create') }}" class="hover:text-deepred transition-colors">{{ __('messages.nav_contact') }}</a>
+            <a href="{{ route('contents.index') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_content') }}</a>
+            <a href="{{ route('courses.index') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_courses') }}</a>
+            <a href="{{ route('workshops.index') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_workshops') }}</a>
+            <a href="{{ route('marketplace.index') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_marketplace') }}</a>
+            <a href="{{ route('about') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_about') }}</a>
+            <a href="{{ route('contact.create') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_contact') }}</a>
         </nav>
         <div class="hidden md:flex items-center gap-2 text-xs">
             <a class="px-2 py-1 rounded {{ app()->getLocale() === 'fr' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'fr') }}">FR</a>

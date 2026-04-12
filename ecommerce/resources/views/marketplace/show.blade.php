@@ -19,6 +19,11 @@
             <p class="mt-5 text-3xl font-semibold text-deepred">{{ number_format($product->price,2) }} TND</p>
             <p class="mt-1 text-sm text-charcoal/70">{{ __('messages.stock') }}: {{ $product->stock }}</p>
 
+            @include('components.front.reassurance-list', [
+                'title' => 'Purchase confidence',
+                'items' => ['Transparent pricing and quantity selection.', 'Secure checkout with clear order confirmation.', 'Designed to complement MIDA learning experiences.']
+            ])
+
             @auth
                 <form method="POST" action="{{ route('favorites.toggle') }}" class="mt-4">@csrf
                     <input type="hidden" name="type" value="product">

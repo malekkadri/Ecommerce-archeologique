@@ -5,9 +5,19 @@
     <div class="fo-panel p-8 md:p-10">
         <div class="h-14 w-14 rounded-full bg-olive/10 text-olive text-2xl flex items-center justify-center">✓</div>
         <h1 class="fo-page-title mt-4">{{ __('messages.order_confirmation') }}</h1>
+        <p class="mt-2 text-charcoal/70">Your order is confirmed and queued for fulfillment.</p>
         <p class="mt-2 text-charcoal/70">{{ __('messages.order_reference') }}: <span class="font-semibold">{{ $order->reference }}</span></p>
         <p class="text-charcoal/70">{{ __('messages.order_status') }}: {{ ucfirst($order->status) }}</p>
         <p class="text-charcoal/70">{{ __('messages.payment_method') }}: {{ __('messages.cash_on_delivery') }}</p>
+
+        <div class="fo-callout mt-5 text-sm">
+            <p class="font-semibold">What happens next</p>
+            <ul class="mt-2 list-disc pl-4 space-y-1 text-charcoal/80">
+                <li>Keep your order reference for quick support.</li>
+                <li>Track status updates in your dashboard.</li>
+                <li>Continue exploring products, courses, and workshops while your order is processed.</li>
+            </ul>
+        </div>
 
         <div class="mt-7">
             <h2 class="text-lg font-semibold mb-3">{{ __('messages.order_items') }}</h2>

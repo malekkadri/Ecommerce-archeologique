@@ -19,6 +19,7 @@ class StoreProductRequest extends FormRequest
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|alpha_dash|unique:products,slug,' . $productId,
             'description' => 'nullable|string',
+            'image' => 'nullable|image|max:4096',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'category_id' => 'nullable|exists:categories,id',

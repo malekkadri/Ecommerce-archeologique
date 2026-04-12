@@ -1,6 +1,14 @@
 @extends('layouts.app')
 @section('content')
 <section class="max-w-4xl mx-auto px-4 py-12">
+    <div class="mb-6 h-72 overflow-hidden rounded-2xl bg-sand/40">
+        @if($product->image_url)
+            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
+        @else
+            <div class="h-full w-full flex items-center justify-center text-charcoal/50">No image available</div>
+        @endif
+    </div>
+
     <h1 class="text-4xl font-semibold">{{ $product->name }}</h1>
     <p class="mt-4 text-charcoal/80">{{ $product->description }}</p>
     <p class="mt-4 text-2xl text-deepred">{{ number_format($product->price,2) }} TND</p>

@@ -1,12 +1,10 @@
-@props([
-    'kicker' => null,
-    'title' => null,
-    'subtitle' => null,
-    'action' => null,
-    'variant' => 'default',
-])
-
 @php
+    $kicker = $kicker ?? null;
+    $title = $title ?? null;
+    $subtitle = $subtitle ?? null;
+    $action = $action ?? null;
+    $variant = $variant ?? 'default';
+
     $variantClass = match ($variant) {
         'editorial' => 'fo-intro-editorial',
         'education' => 'fo-intro-education',

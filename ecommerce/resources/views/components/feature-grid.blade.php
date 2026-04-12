@@ -1,13 +1,11 @@
-@props([
-    'title',
-    'items',
-    'route',
-    'field',
-    'variant' => 'default',
-    'kicker' => null,
-])
-
 @php
+    $title = $title ?? '';
+    $items = $items ?? [];
+    $route = $route ?? '';
+    $field = $field ?? 'title';
+    $variant = $variant ?? 'default';
+    $kicker = $kicker ?? null;
+
     $contextMap = [
         'contents.show' => ['label' => 'Editorial pick', 'benefit' => 'Read and apply practical insights.', 'variant' => 'editorial'],
         'courses.show' => ['label' => 'Structured course', 'benefit' => 'Build skills lesson by lesson.', 'variant' => 'education'],

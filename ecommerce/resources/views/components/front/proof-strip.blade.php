@@ -1,9 +1,7 @@
-@props([
-    'items' => [],
-    'variant' => 'default',
-])
-
 @php
+    $items = $items ?? [];
+    $variant = $variant ?? 'default';
+
     $variantClass = $variant === 'commerce' ? 'fo-proof-commerce' : ($variant === 'editorial' ? 'fo-proof-editorial' : '');
 @endphp
 

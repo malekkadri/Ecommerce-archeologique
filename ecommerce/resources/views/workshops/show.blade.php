@@ -6,14 +6,19 @@
         <div class="fo-panel p-7">
             <p class="fo-kicker">Workshop</p>
             <h1 class="fo-page-title mt-2">{{ $workshop->title }}</h1>
-            <article class="mt-3 fo-readable text-charcoal/80"><p>{{ $workshop->description }}</p></article>
-            <div class="mt-5 grid sm:grid-cols-2 gap-3 text-sm">
-                <div class="fo-surface p-3"><p class="text-charcoal/60">Location</p><p class="font-medium">{{ $workshop->location }}</p></div>
-                <div class="fo-surface p-3"><p class="text-charcoal/60">{{ __('messages.seats') }}</p><p class="font-medium">{{ max(0, $workshop->capacity - $workshop->reserved_count) }} / {{ $workshop->capacity }}</p></div>
+            <div class="mt-4 flex flex-wrap gap-2">
+                <span class="fo-chip fo-chip-status">Live coaching</span>
+                <span class="fo-chip fo-chip-status">Practice-first</span>
+                <span class="fo-chip fo-chip-status">{{ max(0, $workshop->capacity - $workshop->reserved_count) }} seats left</span>
             </div>
-            <div class="fo-callout mt-5 text-sm">
-                <p class="font-semibold">Best for</p>
-                <p class="mt-1 text-charcoal/80">Learners who want live coaching, real-time feedback, and practical accountability.</p>
+            <article class="mt-5 fo-readable text-charcoal/80"><p>{{ $workshop->description }}</p></article>
+            <div class="mt-6 grid sm:grid-cols-2 gap-3 text-sm">
+                <div class="fo-surface p-4"><p class="text-charcoal/60">Location</p><p class="font-medium mt-1">{{ $workshop->location }}</p></div>
+                <div class="fo-surface p-4"><p class="text-charcoal/60">{{ __('messages.seats') }}</p><p class="font-medium mt-1">{{ max(0, $workshop->capacity - $workshop->reserved_count) }} / {{ $workshop->capacity }}</p></div>
+            </div>
+            <div class="fo-callout mt-6 text-sm">
+                <p class="font-semibold">Outcome framing</p>
+                <p class="mt-1.5 text-charcoal/80 leading-relaxed">Best for learners who want live coaching, real-time feedback, and practical accountability from start to finish.</p>
             </div>
         </div>
 
@@ -27,17 +32,18 @@
                 <form method="POST" action="{{ route('favorites.toggle') }}" class="mt-4">@csrf
                     <input type="hidden" name="type" value="workshop">
                     <input type="hidden" name="id" value="{{ $workshop->id }}">
-                    <button class="w-full fo-btn fo-btn-secondary">{{ __('messages.toggle_favorite') }}</button>
+                    <button class="w-full fo-btn fo-btn-secondary">Save for later</button>
                 </form>
 
                 <form method="post" action="{{ route('workshops.book') }}" class="mt-4 space-y-3">
                     @csrf
                     <input type="hidden" name="workshop_id" value="{{ $workshop->id }}">
                     <div>
-                        <label class="text-sm font-medium">{{ __('messages.seats') }}</label>
-                        <input type="number" name="seats" min="1" max="10" value="1" class="fo-input mt-1">
+                        <label for="workshop-seats" class="text-sm font-medium">{{ __('messages.seats') }}</label>
+                        <input id="workshop-seats" type="number" name="seats" min="1" max="10" value="1" class="fo-input mt-1" aria-describedby="workshop-seats-help">
+                        <p id="workshop-seats-help" class="text-xs text-charcoal/60 mt-1">Choose how many seats to reserve in this booking.</p>
                     </div>
-                    <button class="w-full fo-btn fo-btn-primary">{{ __('messages.reserve') }}</button>
+                    <button class="w-full fo-btn fo-btn-primary">Reserve your seat</button>
                 </form>
             @else
                 <p class="mt-4 text-sm text-charcoal/70">{{ __('messages.login_to_order') }}</p>

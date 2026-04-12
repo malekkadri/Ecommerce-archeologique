@@ -28,6 +28,8 @@
         }
         [x-cloak] { display: none !important; }
         a, button { transition: all .2s ease; }
+        .fo-skip-link { position: absolute; left: .9rem; top: -3rem; z-index: 60; }
+        .fo-skip-link:focus-visible { top: .85rem; }
 
         .fo-section { margin-top: 2.4rem; }
         .fo-section-soft { background: rgba(237, 224, 212, 0.38); border-block: 1px solid rgba(47, 42, 40, 0.06); }
@@ -50,6 +52,7 @@
         .fo-input:focus, .fo-select:focus, .fo-textarea:focus { outline: none; border-color: #C96A4A; box-shadow: 0 0 0 3px rgba(201,106,74,.2); }
         .fo-card { background: rgba(255,255,255,.94); border: 1px solid rgba(47,42,40,.09); border-radius: 1.05rem; box-shadow: 0 8px 22px rgba(47,42,40,.06); transition: transform .22s ease, box-shadow .24s ease, border-color .22s ease; }
         .fo-card-hover:hover { transform: translateY(-3px); box-shadow: 0 20px 34px rgba(47,42,40,.12); border-color: rgba(201, 106, 74, 0.32); }
+        .fo-card-hover:focus-visible, .fo-card-hover:focus-within { outline: none; transform: translateY(-2px); box-shadow: 0 0 0 3px rgba(201, 106, 74, 0.2), 0 20px 34px rgba(47,42,40,.12); border-color: rgba(201, 106, 74, 0.38); }
         .fo-card-hover:active { transform: translateY(-1px) scale(.995); }
         .fo-chip { border: 1px solid rgba(47,42,40,.14); border-radius: 999px; padding: .45rem .9rem; font-size: .82rem; background: #fff; color: rgba(47,42,40,.9); font-weight: 500; }
         .fo-chip-active { background: #2F2A28; color: #fff; border-color: #2F2A28; box-shadow: 0 8px 15px rgba(47,42,40,.18); }
@@ -89,9 +92,14 @@
             .fo-page-subtitle { font-size: .95rem; }
             .fo-btn { width: auto; }
         }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+            .fo-card-hover:hover, .fo-card-hover:focus-visible, .fo-card-hover:focus-within, .fo-btn-primary:hover, .fo-btn-secondary:hover { transform: none !important; }
+        }
     </style>
 </head>
 <body class="text-charcoal min-h-screen flex flex-col">
+<a href="#main-content" class="fo-skip-link fo-btn fo-btn-secondary">Skip to content</a>
 <header class="border-b border-sand/80 bg-white/90 backdrop-blur-xl sticky top-0 z-40" x-data="{open:false}">
     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
         <a href="{{ route('home') }}" class="text-2xl font-semibold tracking-wide text-deepred">MIDA</a>
@@ -147,7 +155,7 @@
     </div>
 </header>
 
-<main class="flex-1 pb-10">
+<main id="main-content" class="flex-1 pb-10">
     @if($errors->any())
         <div class="max-w-7xl mx-auto mt-4 px-4"><div class="fo-panel !rounded-xl bg-deepred text-white px-4 py-3">{{ $errors->first() }}</div></div>
     @endif

@@ -1,15 +1,13 @@
-@props([
-    'kicker' => null,
-    'title',
-    'subtitle' => null,
-    'actions' => null,
-    'meta' => [],
-    'soft' => false,
-    'variant' => 'default',
-    'id' => null,
-])
-
 @php
+    $kicker = $kicker ?? null;
+    $title = $title ?? '';
+    $subtitle = $subtitle ?? null;
+    $actions = $actions ?? null;
+    $meta = $meta ?? [];
+    $soft = $soft ?? false;
+    $variant = $variant ?? 'default';
+    $id = $id ?? null;
+
     $variantClasses = [
         'default' => 'fo-header-default',
         'editorial' => 'fo-header-editorial',

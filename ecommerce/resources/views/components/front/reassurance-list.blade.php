@@ -1,10 +1,8 @@
-@props([
-    'title' => null,
-    'items' => [],
-    'tone' => 'default',
-])
-
 @php
+    $title = $title ?? null;
+    $items = $items ?? [];
+    $tone = $tone ?? 'default';
+
     $toneClass = match($tone) {
         'calm' => 'border-olive/25 bg-olive/8',
         'commerce' => 'border-terracotta/25 bg-terracotta/10',

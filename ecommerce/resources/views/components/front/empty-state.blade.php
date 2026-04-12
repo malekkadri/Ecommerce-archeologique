@@ -1,11 +1,9 @@
-@props([
-    'title' => __('messages.empty_state'),
-    'subtitle' => null,
-    'action' => null,
-    'size' => 'default',
-])
-
 @php
+    $title = $title ?? __('messages.empty_state');
+    $subtitle = $subtitle ?? null;
+    $action = $action ?? null;
+    $size = $size ?? 'default';
+
     $sizeClass = $size === 'compact' ? 'p-5 md:p-6' : 'p-8 md:p-10';
 @endphp
 

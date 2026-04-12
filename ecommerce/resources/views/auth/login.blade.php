@@ -6,7 +6,7 @@
         <div class="fo-panel p-7 md:p-8">
             <p class="fo-kicker">Welcome back</p>
             <h1 class="text-3xl font-semibold mt-2">{{ __('messages.login') }}</h1>
-            <p class="text-sm text-charcoal/70 mt-2">Continue your courses, workshops, and orders in one place.</p>
+            <p class="text-sm text-charcoal/70 mt-2">Continue your courses, workshops, orders, and saved discoveries in one account.</p>
             <form method="POST" action="{{ route('login.attempt') }}" class="mt-6 space-y-4">
                 @csrf
                 <input type="email" name="email" value="{{ old('email') }}" placeholder="Email" class="fo-input" required>
@@ -20,11 +20,9 @@
             </div>
         </div>
         <div class="fo-surface p-7 md:p-8 flex flex-col justify-center">
-            <h2 class="text-xl font-semibold">Premium learning, local culture.</h2>
-            <p class="text-sm text-charcoal/70 mt-3">Discover recipes, courses, workshops, and curated products with one account.</p>
-            <div class="mt-5 flex flex-wrap gap-2">
-                <span class="fo-chip">Courses</span><span class="fo-chip">Workshops</span><span class="fo-chip">Marketplace</span>
-            </div>
+            <h2 class="text-xl font-semibold">A trusted member experience.</h2>
+            <p class="text-sm text-charcoal/70 mt-3">Your account keeps learning progress, bookings, and orders connected so every next action feels clear and consistent.</p>
+            @include('components.front.reassurance-list', ['items' => ['Track progress and activity in one dashboard.', 'Save favorites to build your personal learning journey.', 'Checkout and confirmation built for transparency.']])
         </div>
     </div>
 </section>

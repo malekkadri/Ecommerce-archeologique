@@ -11,6 +11,7 @@
             <input type="email" name="email" value="{{ old('email') }}" placeholder="Email" class="fo-input" required>
             <button class="fo-btn fo-btn-primary">{{ __('messages.send_reset_link') }}</button>
         </form>
+        @include('components.front.reassurance-list', ['title' => 'Need reassurance?', 'items' => ['Reset links are sent securely to your email address.', 'You can return to login anytime after resetting.', 'Your learning and order history stays intact.']])
     </div>
 </section>
 @endsection

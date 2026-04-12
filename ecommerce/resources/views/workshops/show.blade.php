@@ -11,10 +11,17 @@
                 <div class="fo-surface p-3"><p class="text-charcoal/60">Location</p><p class="font-medium">{{ $workshop->location }}</p></div>
                 <div class="fo-surface p-3"><p class="text-charcoal/60">{{ __('messages.seats') }}</p><p class="font-medium">{{ max(0, $workshop->capacity - $workshop->reserved_count) }} / {{ $workshop->capacity }}</p></div>
             </div>
+            <div class="fo-callout mt-5 text-sm">
+                <p class="font-semibold">Best for</p>
+                <p class="mt-1 text-charcoal/80">Learners who want live coaching, real-time feedback, and practical accountability.</p>
+            </div>
         </div>
 
         <aside class="fo-panel p-6 sticky top-24">
             <h2 class="text-xl font-semibold">{{ __('messages.reserve') }}</h2>
+            @include('components.front.reassurance-list', [
+                'items' => ['Seat selection is shown before submission.', 'Booking is reflected in your dashboard.', 'Clear workshop logistics with no hidden steps.']
+            ])
             @auth
                 <form method="POST" action="{{ route('favorites.toggle') }}" class="mt-4">@csrf
                     <input type="hidden" name="type" value="workshop">

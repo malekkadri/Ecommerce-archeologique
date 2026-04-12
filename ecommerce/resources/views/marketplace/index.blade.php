@@ -1,11 +1,11 @@
 @extends('layouts.app')
 @section('content')
-@include('components.front.page-header', ['kicker' => __('messages.nav_marketplace'), 'title' => __('messages.nav_marketplace'), 'subtitle' => __('messages.quick_access_desc'), 'meta' => [__('messages.search_products'), __('messages.stock')]])
+@include('components.front.page-header', ['kicker' => __('messages.nav_marketplace'), 'title' => __('messages.nav_marketplace'), 'subtitle' => 'A curated marketplace of essentials selected to support your learning and daily practice.', 'meta' => [__('messages.search_products'), __('messages.stock'), 'Curated picks']])
 <section class="max-w-7xl mx-auto px-4 py-8">
     <form class="fo-surface p-4 mb-6 max-w-2xl grid md:grid-cols-[1fr_auto] gap-3 items-end">
         <div>
             <label class="text-xs uppercase tracking-wide text-charcoal/60">{{ __('messages.search_products') }}</label>
-            <input name="q" value="{{ request('q') }}" class="fo-input mt-1" placeholder="{{ __('messages.search_products') }}">
+            <input name="q" value="{{ request('q') }}" class="fo-input mt-1" placeholder="Search tools, ingredients, or starter kits">
         </div>
         <button class="fo-btn fo-btn-primary">{{ __('messages.search') }}</button>
     </form>
@@ -18,10 +18,11 @@
                 <h3 class="font-semibold leading-snug">{{ $product->name }}</h3>
                 <p class="text-deepred mt-2 font-semibold">{{ number_format($product->price,2) }} TND</p>
                 <p class="text-xs text-charcoal/70 mt-1">{{ __('messages.stock') }}: {{ $product->stock }}</p>
+                <p class="text-xs text-charcoal/65 mt-2">Quality-selected for reliability and compatibility with MIDA learning journeys.</p>
                 <span class="text-sm font-semibold text-deepred mt-auto pt-3">{{ __('messages.view') }} →</span>
             </a>
         @empty
-            <div class="col-span-full">@include('components.front.empty-state')</div>
+            <div class="col-span-full">@include('components.front.empty-state', ['subtitle' => 'No products match this search yet. Try a broader term or browse all items.'])</div>
         @endforelse
     </div>
     <div class="mt-6">{{ $products->links() }}</div>

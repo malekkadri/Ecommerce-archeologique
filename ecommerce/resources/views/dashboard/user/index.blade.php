@@ -1,13 +1,13 @@
 @extends('layouts.app')
 @section('content')
-@include('components.front.page-header', ['kicker' => __('messages.user_dashboard'), 'title' => __('messages.user_dashboard'), 'subtitle' => __('messages.order_summary'), 'meta' => [__('messages.my_orders'), __('messages.my_courses'), __('messages.my_favorites')]])
+@include('components.front.page-header', ['kicker' => __('messages.user_dashboard'), 'title' => __('messages.user_dashboard'), 'subtitle' => 'Your premium member area for progress, purchases, and next best actions.', 'meta' => [__('messages.my_orders'), __('messages.my_courses'), __('messages.my_favorites')]])
 <section class="max-w-6xl mx-auto px-4 py-8 space-y-6">
     @include('components.front.dashboard-nav')
 
     <div class="grid md:grid-cols-3 gap-4">
-        <div class="fo-card p-5"><p class="text-sm text-charcoal/70">{{ __('messages.orders') }}</p><p class="text-3xl font-semibold mt-1">{{ $ordersCount }}</p></div>
-        <div class="fo-card p-5"><p class="text-sm text-charcoal/70">{{ __('messages.bookings') }}</p><p class="text-3xl font-semibold mt-1">{{ $bookingsCount }}</p></div>
-        <div class="fo-card p-5"><p class="text-sm text-charcoal/70">{{ __('messages.courses') }}</p><p class="text-3xl font-semibold mt-1">{{ $coursesCount }}</p></div>
+        <div class="fo-card p-5"><p class="text-sm text-charcoal/70">{{ __('messages.orders') }}</p><p class="text-3xl font-semibold mt-1">{{ $ordersCount }}</p><p class="text-xs text-charcoal/60 mt-2">Track commerce activity and confirmations.</p></div>
+        <div class="fo-card p-5"><p class="text-sm text-charcoal/70">{{ __('messages.bookings') }}</p><p class="text-3xl font-semibold mt-1">{{ $bookingsCount }}</p><p class="text-xs text-charcoal/60 mt-2">Monitor workshop seats and upcoming sessions.</p></div>
+        <div class="fo-card p-5"><p class="text-sm text-charcoal/70">{{ __('messages.courses') }}</p><p class="text-3xl font-semibold mt-1">{{ $coursesCount }}</p><p class="text-xs text-charcoal/60 mt-2">Continue lessons with saved progress.</p></div>
     </div>
 
     <div class="fo-panel p-5">
@@ -22,7 +22,7 @@
                     <span>{{ number_format($order->total, 2) }} {{ $order->currency }}</span>
                 </div>
             @empty
-                @include('components.front.empty-state', ['title' => __('messages.no_orders_yet')])
+                @include('components.front.empty-state', ['title' => __('messages.no_orders_yet'), 'subtitle' => 'Start with the marketplace to populate your order history and unlock a complete dashboard overview.'])
             @endforelse
         </div>
     </div>

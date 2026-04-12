@@ -12,7 +12,7 @@
         <a href="{{ route($routePrefix . '.create') }}" class="admin-btn admin-btn-primary">+ New</a>
     </div>
 
-    <div class="admin-card">
+    <div class="admin-card overflow-hidden">
         <form method="GET" class="p-4 border-b border-slate-100 flex items-center gap-3">
             <input type="text" name="q" value="{{ request('q') }}" class="admin-input" placeholder="Search...">
             <button class="admin-btn admin-btn-secondary">Search</button>
@@ -20,7 +20,7 @@
 
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-slate-50 text-left">
+                <thead class="bg-slate-50/80 text-left">
                     <tr>
                         @foreach($columns as $column)
                             <th class="px-4 py-3 font-semibold text-slate-800">{{ $column['label'] }}</th>
@@ -30,7 +30,7 @@
                 </thead>
                 <tbody>
                     @forelse($items as $item)
-                        <tr class="border-t border-slate-100">
+                        <tr class="border-t border-slate-100 hover:bg-slate-50/60 transition">
                             @foreach($columns as $column)
                                 @php $value = data_get($item, $column['key']); $type = $column['type'] ?? 'text'; @endphp
                                 <td class="px-4 py-3 text-slate-700 align-top">

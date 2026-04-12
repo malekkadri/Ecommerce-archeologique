@@ -1,19 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<section class="max-w-7xl mx-auto px-4 pt-12 pb-16">
-    <div class="bg-gradient-to-r from-sand to-white rounded-3xl p-10 shadow-sm">
-        <p class="uppercase text-xs tracking-[0.2em] text-terracotta">{{ __('messages.brand_signature') }}</p>
-        <h1 class="text-4xl md:text-5xl font-semibold mt-3 leading-tight">{{ __('messages.home_hero_title') }}</h1>
-        <p class="mt-4 text-lg text-gray-700 max-w-3xl">{{ __('messages.home_hero_subtitle') }}</p>
-    </div>
-</section>
+@include('components.front.page-header', [
+    'kicker' => __('messages.brand_signature'),
+    'title' => __('messages.home_hero_title'),
+    'subtitle' => __('messages.home_hero_subtitle'),
+    'actions' => '<a href="'.route('courses.index').'" class="fo-btn fo-btn-primary">'.__('messages.nav_courses').'</a><a href="'.route('marketplace.index').'" class="fo-btn fo-btn-secondary">'.__('messages.nav_marketplace').'</a>',
+])
 
-<section class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-4">
+<section class="max-w-7xl mx-auto px-4 mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
     @foreach ([['contents.index','nav_content'],['courses.index','nav_courses'],['workshops.index','nav_workshops'],['marketplace.index','nav_marketplace']] as $item)
-        <a href="{{ route($item[0]) }}" class="bg-white rounded-2xl p-6 shadow hover:shadow-lg transition">
+        <a href="{{ route($item[0]) }}" class="fo-card fo-card-hover p-6">
             <h3 class="font-semibold text-lg">{{ __('messages.' . $item[1]) }}</h3>
-            <p class="text-sm text-gray-600 mt-2">{{ __('messages.quick_access_desc') }}</p>
+            <p class="text-sm text-charcoal/70 mt-2">{{ __('messages.quick_access_desc') }}</p>
         </a>
     @endforeach
 </section>

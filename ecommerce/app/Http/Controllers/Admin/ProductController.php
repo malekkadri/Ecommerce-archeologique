@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\VendorProfile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -32,6 +33,7 @@ class ProductController extends Controller
             'title' => 'Products',
             'routePrefix' => 'admin.products',
             'columns' => [
+                ['label' => 'Image', 'key' => 'image_url', 'type' => 'image'],
                 ['label' => 'Name', 'key' => 'name'],
                 ['label' => 'Vendor', 'key' => 'vendorProfile.shop_name'],
                 ['label' => 'Category', 'key' => 'category.name'],
@@ -55,20 +57,25 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        Product::create($this->validated($request));
+        $data = $this->validated($request);
+        $this->persistUploads($request, $data);
+
+        $product = Product::create($data);
+        $this->syncGallery($request, $product);
 
         return redirect()->route('admin.products.index')->with('success', __('messages.saved'));
     }
 
     public function show(Product $product)
     {
-        $product->load(['category', 'vendorProfile']);
+        $product->load(['category', 'vendorProfile', 'mediaGallery']);
 
         return view('admin.shared-show', [
             'title' => 'Product details',
             'routePrefix' => 'admin.products',
             'item' => $product,
             'displayFields' => [
+                ['label' => 'Image', 'key' => 'image_url', 'type' => 'image'],
                 ['label' => 'Name', 'key' => 'name'],
                 ['label' => 'Slug', 'key' => 'slug'],
                 ['label' => 'SKU', 'key' => 'sku'],
@@ -85,6 +92,8 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
+        $product->load('mediaGallery');
+
         return view('admin.shared-form', [
             'title' => 'Edit Product',
             'routePrefix' => 'admin.products',
@@ -96,35 +105,50 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $product->update($this->validated($request, $product));
+        $data = $this->validated($request, $product);
+        $this->persistUploads($request, $data, $product);
+
+        $product->update($data);
+        $this->syncGallery($request, $product);
 
         return redirect()->route('admin.products.edit', $product)->with('success', __('messages.updated'));
     }
 
     public function destroy(Product $product)
     {
+        if ($product->image_path) {
+            Storage::disk('public')->delete($product->image_path);
+        }
+
+        foreach ($product->mediaGallery as $media) {
+            Storage::disk('public')->delete($media->path);
+            $media->delete();
+        }
+
         $product->delete();
 
         return redirect()->route('admin.products.index')->with('success', __('messages.deleted'));
     }
 
-    private function fields()
+    private function fields(): array
     {
         return [
             ['name' => 'name', 'label' => 'Name', 'type' => 'text', 'required' => true],
             ['name' => 'slug', 'label' => 'Slug', 'type' => 'text'],
             ['name' => 'sku', 'label' => 'SKU', 'type' => 'text'],
             ['name' => 'vendor_profile_id', 'label' => 'Vendor', 'type' => 'select', 'required' => true, 'options' => VendorProfile::orderBy('shop_name')->pluck('shop_name', 'id')->toArray()],
-            ['name' => 'category_id', 'label' => 'Category', 'type' => 'select', 'options' => Category::where('type', 'product')->orderBy('name')->pluck('name', 'id')->toArray()],
+            ['name' => 'category_id', 'label' => 'Category', 'type' => 'select', 'options' => Category::where('type', 'product')->orWhere('type', 'marketplace')->orderBy('name')->pluck('name', 'id')->toArray()],
             ['name' => 'price', 'label' => 'Price (TND)', 'type' => 'number', 'required' => true, 'step' => '0.01', 'min' => '0'],
             ['name' => 'stock', 'label' => 'Stock', 'type' => 'number', 'required' => true, 'min' => '0'],
             ['name' => 'description', 'label' => 'Description', 'type' => 'textarea'],
+            ['name' => 'image', 'label' => 'Primary image', 'type' => 'image'],
+            ['name' => 'gallery_images', 'label' => 'Gallery images', 'type' => 'gallery'],
             ['name' => 'is_featured', 'label' => 'Featured product', 'type' => 'checkbox'],
             ['name' => 'is_active', 'label' => 'Active', 'type' => 'checkbox'],
         ];
     }
 
-    private function validated(Request $request, ?Product $product = null)
+    private function validated(Request $request, ?Product $product = null): array
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -135,6 +159,12 @@ class ProductController extends Controller
             'price' => ['required', 'numeric', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'max:4096'],
+            'gallery_images' => ['nullable', 'array'],
+            'gallery_images.*' => ['image', 'max:4096'],
+            'remove_image' => ['nullable', 'boolean'],
+            'remove_gallery' => ['nullable', 'array'],
+            'remove_gallery.*' => ['integer'],
             'is_featured' => ['nullable', 'boolean'],
             'is_active' => ['nullable', 'boolean'],
         ]);
@@ -147,5 +177,43 @@ class ProductController extends Controller
         $data['is_active'] = $request->boolean('is_active', true);
 
         return $data;
+    }
+
+    private function persistUploads(Request $request, array &$data, ?Product $product = null): void
+    {
+        if ($request->boolean('remove_image') && $product?->image_path) {
+            Storage::disk('public')->delete($product->image_path);
+            $data['image_path'] = null;
+        }
+
+        if ($request->hasFile('image')) {
+            if ($product?->image_path) {
+                Storage::disk('public')->delete($product->image_path);
+            }
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
+
+        unset($data['image'], $data['gallery_images']);
+    }
+
+    private function syncGallery(Request $request, Product $product): void
+    {
+        $removeIds = collect($request->input('remove_gallery', []))->map(fn ($id) => (int) $id)->all();
+        if (!empty($removeIds)) {
+            $product->mediaGallery()->whereIn('id', $removeIds)->get()->each(function ($media) {
+                Storage::disk('public')->delete($media->path);
+                $media->delete();
+            });
+        }
+
+        if ($request->hasFile('gallery_images')) {
+            $nextOrder = (int) $product->mediaGallery()->max('sort_order') + 1;
+            foreach ($request->file('gallery_images') as $upload) {
+                $product->mediaGallery()->create([
+                    'path' => $upload->store('products/gallery', 'public'),
+                    'sort_order' => $nextOrder++,
+                ]);
+            }
+        }
     }
 }

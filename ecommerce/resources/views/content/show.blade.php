@@ -11,6 +11,8 @@
             <span class="fo-chip">Field-informed reading</span>
         </div>
 
+        @if($content->featured_image_url)<div class="mt-6 h-72 overflow-hidden rounded-xl border border-sand/70"><img src="{{ $content->featured_image_url }}" alt="{{ $content->title }}" class="h-full w-full object-cover"></div>@endif
+
         <div class="fo-callout mt-6 text-sm text-charcoal/80">
             <p class="font-semibold">Reading intent</p>
             <p class="mt-1">Use this piece as context before enrolling in a course, booking a workshop, or choosing products for practice.</p>

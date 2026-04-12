@@ -27,7 +27,11 @@
     <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-5">
         @forelse($items as $item)
             <a href="{{ route($route, $item->slug) }}" class="fo-card fo-card-hover p-5 flex flex-col gap-3 h-full fo-card-{{ $resolvedVariant }}" data-cta="feature-item">
-                <div class="h-24 rounded-xl bg-sand/35 border border-sand/70 flex items-center justify-center text-charcoal/45 text-xs uppercase tracking-wide">{{ $context['label'] }}</div>
+                <div class="h-24 rounded-xl bg-sand/35 border border-sand/70 overflow-hidden">
+                    @php $gridImage = data_get($item, "image_url") ?: data_get($item, "featured_image_url"); @endphp
+                    @if($gridImage)<img src="{{ $gridImage }}" alt="{{ data_get($item, $field) }}" class="h-full w-full object-cover">
+                    @else<div class="h-full w-full flex items-center justify-center text-charcoal/45 text-xs uppercase tracking-wide">{{ $context['label'] }}</div>@endif
+                </div>
                 <h3 class="font-semibold leading-snug">{{ data_get($item, $field) }}</h3>
                 @if(isset($item->summary) && $item->summary)
                     <p class="text-sm text-charcoal/70">{{ \Illuminate\Support\Str::limit($item->summary, 90) }}</p>

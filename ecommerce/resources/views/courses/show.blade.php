@@ -4,6 +4,14 @@
 <section class="max-w-6xl mx-auto px-4 py-12">
     <div class="grid lg:grid-cols-[1.4fr_.9fr] gap-6 items-start">
         <div class="fo-panel p-8">
+            @if($course->image_url)<div class="mb-5 h-64 overflow-hidden rounded-xl bg-sand/35 border border-sand/80"><img src="{{ $course->image_url }}" class="h-full w-full object-cover" alt="{{ $course->title }}"></div>@endif
+            @if($course->mediaGallery->isNotEmpty())
+                <div class="mb-5 grid grid-cols-4 gap-2">
+                    @foreach($course->mediaGallery as $media)
+                        <img src="{{ $media->url }}" alt="{{ $course->title }}" class="h-16 w-full rounded-md object-cover border border-sand/60">
+                    @endforeach
+                </div>
+            @endif
             <p class="fo-kicker">Course detail</p>
             <h1 class="fo-page-title mt-2">{{ $course->title }}</h1>
             <div class="mt-4 flex flex-wrap gap-2">

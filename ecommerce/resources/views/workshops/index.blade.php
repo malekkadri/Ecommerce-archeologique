@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-@include('components.front.page-header', ['kicker' => __('messages.nav_workshops'), 'title' => __('messages.nav_workshops'), 'subtitle' => 'Live, practice-first sessions for direct feedback and real-time confidence.', 'meta' => [__('messages.seats'), __('messages.reserve'), 'Guided practice']])
+@include('components.front.page-header', ['kicker' => __('messages.nav_workshops'), 'title' => __('messages.nav_workshops'), 'subtitle' => $websiteSettings['workshops_intro'] ?? 'Live, practice-first sessions for direct feedback and real-time confidence.', 'meta' => [__('messages.seats'), __('messages.reserve'), 'Guided practice']])
 <section class="max-w-7xl mx-auto px-4 py-8">
     @include('components.front.section-intro', [
         'kicker' => 'Live learning',
@@ -12,6 +12,9 @@
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         @forelse($workshops as $workshop)
             <a href="{{ route('workshops.show',$workshop->slug) }}" class="fo-card fo-card-hover p-6 flex flex-col h-full">
+                <div class="mb-3 h-40 overflow-hidden rounded-xl bg-sand/40 border border-sand/80">
+                    @if($workshop->image_url)<img src="{{ $workshop->image_url }}" alt="{{ $workshop->title }}" class="h-full w-full object-cover">@else<div class="h-full w-full flex items-center justify-center text-xs text-charcoal/45">No image</div>@endif
+                </div>
                 <span class="fo-chip w-fit">Live workshop</span>
                 <h3 class="font-semibold text-xl mt-3 leading-snug">{{ $workshop->title }}</h3>
                 <div class="mt-3 space-y-1.5 text-sm text-charcoal/72">

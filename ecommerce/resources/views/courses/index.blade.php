@@ -4,7 +4,7 @@
     'variant' => 'education',
     'kicker' => __('messages.nav_courses'),
     'title' => __('messages.nav_courses'),
-    'subtitle' => 'Step-by-step learning paths designed for practical confidence and measurable progress.',
+    'subtitle' => $websiteSettings['courses_intro'] ?? 'Step-by-step learning paths designed for practical confidence and measurable progress.',
     'meta' => [__('messages.featured_courses'), __('messages.lessons'), 'Structured progression'],
 ])
 
@@ -19,6 +19,9 @@
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         @forelse($courses as $course)
             <a href="{{ route('courses.show',$course->slug) }}" class="fo-card fo-card-hover p-6 flex flex-col h-full">
+                <div class="mb-3 h-40 overflow-hidden rounded-xl bg-sand/40 border border-sand/80">
+                    @if($course->image_url)<img src="{{ $course->image_url }}" alt="{{ $course->title }}" class="h-full w-full object-cover">@else<div class="h-full w-full flex items-center justify-center text-xs text-charcoal/45">No image</div>@endif
+                </div>
                 <p class="fo-kicker">Course</p>
                 <h3 class="font-semibold text-xl mt-2 leading-snug">{{ $course->title }}</h3>
                 <p class="text-sm mt-3 text-charcoal/72 leading-relaxed">{{ \Illuminate\Support\Str::limit($course->summary, 140) }}</p>

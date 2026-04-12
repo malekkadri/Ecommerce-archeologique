@@ -24,6 +24,11 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function mediaGallery()
+    {
+        return $this->morphMany(EntityMedia::class, 'mediable')->orderBy('sort_order');
+    }
+
     public function favorites()
     {
         return $this->morphMany(Favorite::class, 'favoritable');
@@ -31,10 +36,6 @@ class Product extends Model
 
     public function getImageUrlAttribute()
     {
-        if (!$this->image_path) {
-            return null;
-        }
-
-        return Storage::url($this->image_path);
+        return $this->image_path ? Storage::url($this->image_path) : null;
     }
 }

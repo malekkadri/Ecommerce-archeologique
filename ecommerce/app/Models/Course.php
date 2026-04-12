@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Course extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['category_id', 'title', 'slug', 'summary', 'description', 'level', 'price', 'is_published', 'is_featured'];
+    protected $fillable = ['category_id', 'title', 'slug', 'summary', 'description', 'image_path', 'level', 'price', 'is_published', 'is_featured'];
     protected $casts = ['is_published' => 'boolean', 'is_featured' => 'boolean', 'price' => 'decimal:2'];
 
     public function category()
@@ -28,8 +29,18 @@ class Course extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function mediaGallery()
+    {
+        return $this->morphMany(EntityMedia::class, 'mediable')->orderBy('sort_order');
+    }
+
     public function favorites()
     {
         return $this->morphMany(Favorite::class, 'favoritable');
+    }
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image_path ? Storage::url($this->image_path) : null;
     }
 }

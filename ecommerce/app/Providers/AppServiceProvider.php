@@ -2,27 +2,19 @@
 
 namespace App\Providers;
 
+use App\Services\WebsiteSettings;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
     public function register()
     {
-        //
+        $this->app->singleton(WebsiteSettings::class, fn () => new WebsiteSettings());
     }
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(WebsiteSettings $settings)
     {
-        //
+        View::share('websiteSettings', $settings->all());
     }
 }

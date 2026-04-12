@@ -4,6 +4,14 @@
 <section class="max-w-6xl mx-auto px-4 py-12">
     <div class="grid lg:grid-cols-[1.35fr_.85fr] gap-6 items-start">
         <div class="fo-panel p-7">
+            @if($workshop->image_url)<div class="mb-5 h-64 overflow-hidden rounded-xl bg-sand/35 border border-sand/80"><img src="{{ $workshop->image_url }}" class="h-full w-full object-cover" alt="{{ $workshop->title }}"></div>@endif
+            @if($workshop->mediaGallery->isNotEmpty())
+                <div class="mb-5 grid grid-cols-4 gap-2">
+                    @foreach($workshop->mediaGallery as $media)
+                        <img src="{{ $media->url }}" alt="{{ $workshop->title }}" class="h-16 w-full rounded-md object-cover border border-sand/60">
+                    @endforeach
+                </div>
+            @endif
             <p class="fo-kicker">Workshop</p>
             <h1 class="fo-page-title mt-2">{{ $workshop->title }}</h1>
             <div class="mt-4 flex flex-wrap gap-2">

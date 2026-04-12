@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Workshop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -27,6 +28,7 @@ class WorkshopController extends Controller
             'title' => 'Workshops',
             'routePrefix' => 'admin.workshops',
             'columns' => [
+                ['label' => 'Image', 'key' => 'image_url', 'type' => 'image'],
                 ['label' => 'Title', 'key' => 'title'],
                 ['label' => 'Category', 'key' => 'category.name'],
                 ['label' => 'Location', 'key' => 'location'],
@@ -40,31 +42,29 @@ class WorkshopController extends Controller
 
     public function create()
     {
-        return view('admin.shared-form', [
-            'title' => 'Create Workshop',
-            'routePrefix' => 'admin.workshops',
-            'method' => 'POST',
-            'item' => new Workshop(),
-            'fields' => $this->fields(),
-        ]);
+        return view('admin.shared-form', ['title' => 'Create Workshop', 'routePrefix' => 'admin.workshops', 'method' => 'POST', 'item' => new Workshop(), 'fields' => $this->fields()]);
     }
 
     public function store(Request $request)
     {
-        Workshop::create($this->validated($request));
+        $data = $this->validated($request);
+        $this->persistUploads($request, $data);
+        $workshop = Workshop::create($data);
+        $this->syncGallery($request, $workshop);
 
         return redirect()->route('admin.workshops.index')->with('success', __('messages.saved'));
     }
 
     public function show(Workshop $workshop)
     {
-        $workshop->load('category');
+        $workshop->load(['category', 'mediaGallery']);
 
         return view('admin.shared-show', [
             'title' => 'Workshop details',
             'routePrefix' => 'admin.workshops',
             'item' => $workshop,
             'displayFields' => [
+                ['label' => 'Image', 'key' => 'image_url', 'type' => 'image'],
                 ['label' => 'Title', 'key' => 'title'],
                 ['label' => 'Slug', 'key' => 'slug'],
                 ['label' => 'Category', 'key' => 'category.name'],
@@ -83,30 +83,37 @@ class WorkshopController extends Controller
 
     public function edit(Workshop $workshop)
     {
-        return view('admin.shared-form', [
-            'title' => 'Edit Workshop',
-            'routePrefix' => 'admin.workshops',
-            'method' => 'PUT',
-            'item' => $workshop,
-            'fields' => $this->fields(),
-        ]);
+        $workshop->load('mediaGallery');
+
+        return view('admin.shared-form', ['title' => 'Edit Workshop', 'routePrefix' => 'admin.workshops', 'method' => 'PUT', 'item' => $workshop, 'fields' => $this->fields()]);
     }
 
     public function update(Request $request, Workshop $workshop)
     {
-        $workshop->update($this->validated($request, $workshop));
+        $data = $this->validated($request, $workshop);
+        $this->persistUploads($request, $data, $workshop);
+        $workshop->update($data);
+        $this->syncGallery($request, $workshop);
 
         return redirect()->route('admin.workshops.edit', $workshop)->with('success', __('messages.updated'));
     }
 
     public function destroy(Workshop $workshop)
     {
+        if ($workshop->image_path) {
+            Storage::disk('public')->delete($workshop->image_path);
+        }
+        foreach ($workshop->mediaGallery as $media) {
+            Storage::disk('public')->delete($media->path);
+            $media->delete();
+        }
+
         $workshop->delete();
 
         return redirect()->route('admin.workshops.index')->with('success', __('messages.deleted'));
     }
 
-    private function fields()
+    private function fields(): array
     {
         return [
             ['name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
@@ -120,11 +127,13 @@ class WorkshopController extends Controller
             ['name' => 'capacity', 'label' => 'Capacity', 'type' => 'number', 'required' => true, 'min' => '1'],
             ['name' => 'reserved_count', 'label' => 'Reserved count', 'type' => 'number', 'min' => '0'],
             ['name' => 'price', 'label' => 'Price (TND)', 'type' => 'number', 'required' => true, 'step' => '0.01', 'min' => '0'],
+            ['name' => 'image', 'label' => 'Primary image', 'type' => 'image'],
+            ['name' => 'gallery_images', 'label' => 'Gallery images', 'type' => 'gallery'],
             ['name' => 'is_featured', 'label' => 'Featured', 'type' => 'checkbox'],
         ];
     }
 
-    private function validated(Request $request, ?Workshop $workshop = null)
+    private function validated(Request $request, ?Workshop $workshop = null): array
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -138,6 +147,12 @@ class WorkshopController extends Controller
             'capacity' => ['required', 'integer', 'min:1'],
             'reserved_count' => ['nullable', 'integer', 'min:0'],
             'price' => ['required', 'numeric', 'min:0'],
+            'image' => ['nullable', 'image', 'max:4096'],
+            'gallery_images' => ['nullable', 'array'],
+            'gallery_images.*' => ['image', 'max:4096'],
+            'remove_image' => ['nullable', 'boolean'],
+            'remove_gallery' => ['nullable', 'array'],
+            'remove_gallery.*' => ['integer'],
             'is_featured' => ['nullable', 'boolean'],
         ]);
 
@@ -149,5 +164,39 @@ class WorkshopController extends Controller
         $data['is_featured'] = $request->boolean('is_featured');
 
         return $data;
+    }
+
+    private function persistUploads(Request $request, array &$data, ?Workshop $workshop = null): void
+    {
+        if ($request->boolean('remove_image') && $workshop?->image_path) {
+            Storage::disk('public')->delete($workshop->image_path);
+            $data['image_path'] = null;
+        }
+        if ($request->hasFile('image')) {
+            if ($workshop?->image_path) {
+                Storage::disk('public')->delete($workshop->image_path);
+            }
+            $data['image_path'] = $request->file('image')->store('workshops', 'public');
+        }
+
+        unset($data['image'], $data['gallery_images']);
+    }
+
+    private function syncGallery(Request $request, Workshop $workshop): void
+    {
+        $removeIds = collect($request->input('remove_gallery', []))->map(fn ($id) => (int) $id)->all();
+        if ($removeIds) {
+            $workshop->mediaGallery()->whereIn('id', $removeIds)->get()->each(function ($media) {
+                Storage::disk('public')->delete($media->path);
+                $media->delete();
+            });
+        }
+
+        if ($request->hasFile('gallery_images')) {
+            $nextOrder = (int) $workshop->mediaGallery()->max('sort_order') + 1;
+            foreach ($request->file('gallery_images') as $upload) {
+                $workshop->mediaGallery()->create(['path' => $upload->store('workshops/gallery', 'public'), 'sort_order' => $nextOrder++]);
+            }
+        }
     }
 }

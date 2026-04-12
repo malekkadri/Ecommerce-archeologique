@@ -21,7 +21,7 @@ class MarketplaceController extends Controller
 
     public function show($slug)
     {
-        $product = Product::with(['category', 'vendorProfile'])->where('slug', $slug)->firstOrFail();
+        $product = Product::with(['category', 'vendorProfile', 'mediaGallery'])->where('slug', $slug)->firstOrFail();
         return view('marketplace.show', compact('product'));
     }
 }

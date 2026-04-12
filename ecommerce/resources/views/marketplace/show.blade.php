@@ -10,6 +10,13 @@
                     <div class="h-full w-full flex items-center justify-center text-charcoal/50">No image available</div>
                 @endif
             </div>
+            @if($product->mediaGallery->isNotEmpty())
+                <div class="mt-3 grid grid-cols-4 gap-2">
+                    @foreach($product->mediaGallery as $media)
+                        <img src="{{ $media->url }}" alt="{{ $product->name }}" class="h-16 w-full rounded-md object-cover border border-sand/60">
+                    @endforeach
+                </div>
+            @endif
         </div>
 
         <aside class="fo-panel p-7 sticky top-24 fo-sticky-desktop">

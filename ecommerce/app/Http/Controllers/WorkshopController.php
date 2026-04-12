@@ -17,7 +17,7 @@ class WorkshopController extends Controller
 
     public function show($slug)
     {
-        $workshop = Workshop::where('slug', $slug)->firstOrFail();
+        $workshop = Workshop::with('mediaGallery')->where('slug', $slug)->firstOrFail();
         return view('workshops.show', compact('workshop'));
     }
 

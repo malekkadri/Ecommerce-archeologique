@@ -1,16 +1,17 @@
 @extends('layouts.app')
 @section('content')
 @include('components.front.page-header', [
+    'variant' => 'editorial',
     'kicker' => __('messages.nav_content'),
     'title' => __('messages.nav_content'),
     'subtitle' => 'Editorial guidance, practical context, and cultural stories that help you make smarter learning and shopping choices.',
     'meta' => [__('messages.search'), __('messages.filter'), 'Expert perspective'],
 ])
 
-@include('components.front.proof-strip', ['items' => [
+@include('components.front.proof-strip', ['variant' => 'editorial', 'items' => [
     ['value' => $contents->total(), 'label' => 'Published pieces'],
     ['value' => strtoupper((string) request('type', 'all')), 'label' => 'Current focus'],
-    ['value' => 'Read', 'label' => 'Understand before action'],
+    ['value' => 'Read', 'label' => 'Context before commitment'],
     ['value' => 'Save', 'label' => 'Revisit in favorites'],
 ]])
 

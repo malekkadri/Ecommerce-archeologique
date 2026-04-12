@@ -1,9 +1,18 @@
 @props([
     'title' => null,
     'items' => [],
+    'tone' => 'default',
 ])
 
-<div class="fo-reassurance">
+@php
+    $toneClass = match($tone) {
+        'calm' => 'border-olive/25 bg-olive/8',
+        'commerce' => 'border-terracotta/25 bg-terracotta/10',
+        default => '',
+    };
+@endphp
+
+<div class="fo-reassurance {{ $toneClass }}" data-module="reassurance-list">
     @if($title)
         <p class="font-semibold text-sm">{{ $title }}</p>
     @endif

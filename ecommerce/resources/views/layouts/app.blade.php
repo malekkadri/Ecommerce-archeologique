@@ -24,31 +24,21 @@
     <style>
         body {
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-            background:
-                radial-gradient(circle at 8% 0%, rgba(201, 106, 74, 0.12), transparent 32%),
-                radial-gradient(circle at 100% 10%, rgba(95, 111, 82, 0.1), transparent 28%),
-                #FAF7F2;
+            background: radial-gradient(circle at 8% 0%, rgba(201, 106, 74, 0.12), transparent 32%), radial-gradient(circle at 100% 10%, rgba(95, 111, 82, 0.1), transparent 28%), #FAF7F2;
         }
         [x-cloak] { display: none !important; }
+        a, button { transition: all .2s ease; }
 
         .fo-section { margin-top: 2.4rem; }
         .fo-section-soft { background: rgba(237, 224, 212, 0.38); border-block: 1px solid rgba(47, 42, 40, 0.06); }
-        .fo-panel {
-            background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.9));
-            border: 1px solid rgba(201, 106, 74, 0.16);
-            border-radius: 1.25rem;
-            box-shadow: 0 18px 40px rgba(47, 42, 40, 0.09);
-        }
-        .fo-surface {
-            background: rgba(255,255,255,0.82);
-            border: 1px solid rgba(47,42,40,.08);
-            border-radius: 1.1rem;
-        }
+        .fo-panel { background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.9)); border: 1px solid rgba(201, 106, 74, 0.16); border-radius: 1.25rem; box-shadow: 0 18px 40px rgba(47, 42, 40, 0.09); }
+        .fo-surface { background: rgba(255,255,255,0.82); border: 1px solid rgba(47,42,40,.08); border-radius: 1.1rem; }
         .fo-page-title { font-size: clamp(1.9rem, 3.1vw, 2.9rem); line-height: 1.13; font-weight: 680; letter-spacing: -.01em; color: #2F2A28; }
         .fo-page-subtitle { color: rgba(47, 42, 40, 0.74); font-size: 1.02rem; max-width: 65ch; }
         .fo-kicker { text-transform: uppercase; letter-spacing: .16em; font-size: .69rem; color: #8C2F39; font-weight: 700; }
-        .fo-btn { display: inline-flex; align-items: center; justify-content: center; border-radius: .82rem; font-weight: 600; font-size: .9rem; padding: .72rem 1.05rem; transition: transform .18s ease, box-shadow .2s ease, background .2s ease, color .2s ease; }
-        .fo-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201, 106, 74, 0.22); }
+
+        .fo-btn { display: inline-flex; align-items: center; justify-content: center; border-radius: .82rem; font-weight: 600; font-size: .9rem; padding: .72rem 1.05rem; transition: transform .18s ease, box-shadow .2s ease, background .2s ease, color .2s ease; min-height: 2.7rem; }
+        .fo-btn:focus-visible, .fo-focus:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201, 106, 74, 0.22); }
         .fo-btn-primary { background: linear-gradient(135deg, #C96A4A, #8C2F39); color: #fff; box-shadow: 0 10px 22px rgba(140, 47, 57, 0.25); }
         .fo-btn-primary:hover { transform: translateY(-1px); filter: brightness(1.03); box-shadow: 0 16px 28px rgba(140, 47, 57, 0.3); }
         .fo-btn-secondary { background: #EDE0D4; color: #2F2A28; border: 1px solid rgba(47,42,40,.1); }
@@ -60,28 +50,43 @@
         .fo-input:focus, .fo-select:focus, .fo-textarea:focus { outline: none; border-color: #C96A4A; box-shadow: 0 0 0 3px rgba(201,106,74,.2); }
         .fo-card { background: rgba(255,255,255,.94); border: 1px solid rgba(47,42,40,.09); border-radius: 1.05rem; box-shadow: 0 8px 22px rgba(47,42,40,.06); transition: transform .22s ease, box-shadow .24s ease, border-color .22s ease; }
         .fo-card-hover:hover { transform: translateY(-3px); box-shadow: 0 20px 34px rgba(47,42,40,.12); border-color: rgba(201, 106, 74, 0.32); }
+        .fo-card-hover:active { transform: translateY(-1px) scale(.995); }
         .fo-chip { border: 1px solid rgba(47,42,40,.14); border-radius: 999px; padding: .45rem .9rem; font-size: .82rem; background: #fff; color: rgba(47,42,40,.9); font-weight: 500; }
-        .fo-chip-active { background: #2F2A28; color: #fff; border-color: #2F2A28; }
+        .fo-chip-active { background: #2F2A28; color: #fff; border-color: #2F2A28; box-shadow: 0 8px 15px rgba(47,42,40,.18); }
         .fo-chip-status { font-size: .72rem; letter-spacing: .03em; }
-        .fo-empty {
-            border: 1px dashed rgba(47,42,40,.2);
-            background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
-            border-radius: 1rem;
-        }
+        .fo-empty { border: 1px dashed rgba(47,42,40,.2); background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); border-radius: 1rem; }
         .fo-proof-item { border: 1px solid rgba(47,42,40,.08); border-radius: .9rem; background: #fff; padding: .8rem .9rem; }
         .fo-proof-value { font-size: 1.35rem; font-weight: 700; color: #2F2A28; line-height: 1.1; }
         .fo-proof-label { margin-top: .2rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: rgba(47,42,40,.62); }
         .fo-reassurance { border: 1px solid rgba(95,111,82,.22); background: rgba(95,111,82,.07); border-radius: .95rem; padding: .85rem 1rem; }
         .fo-callout { border: 1px solid rgba(201,106,74,.2); background: rgba(201,106,74,.08); border-radius: 1rem; padding: 1rem 1.1rem; }
+        .fo-readable { max-width: 72ch; }
         .fo-readable > * + * { margin-top: 1rem; }
-        .fo-readable h2, .fo-readable h3 { line-height: 1.28; color: #2F2A28; font-weight: 620; margin-top: 1.6rem; }
+        .fo-readable h2, .fo-readable h3 { line-height: 1.28; color: #2F2A28; font-weight: 620; margin-top: 1.7rem; }
+        .fo-readable p { line-height: 1.78; color: rgba(47,42,40,.9); }
         .fo-readable ul { padding-left: 1.1rem; list-style: disc; }
-        .fo-readable blockquote { border-left: 3px solid rgba(201,106,74,.55); padding-left: .9rem; color: rgba(47,42,40,.76); font-style: italic; }
+        .fo-readable li + li { margin-top: .35rem; }
+        .fo-readable blockquote { border-left: 3px solid rgba(201,106,74,.55); padding: .4rem 0 .4rem .9rem; color: rgba(47,42,40,.76); font-style: italic; }
+
+        .fo-header-editorial { border-color: rgba(47,42,40,.12); }
+        .fo-header-education { border-color: rgba(95,111,82,.28); }
+        .fo-header-commerce { border-color: rgba(201,106,74,.28); }
+        .fo-header-dashboard { border-color: rgba(47,42,40,.16); background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,247,245,0.93)); }
+        .fo-intro-editorial h2 { font-weight: 640; }
+        .fo-intro-commerce .fo-kicker { color: #C96A4A; }
+        .fo-proof-commerce .fo-proof-item { border-color: rgba(201,106,74,.23); }
+        .fo-proof-editorial .fo-proof-item { background: rgba(255,255,255,.8); }
 
         .fo-table-wrap { overflow-x: auto; border: 1px solid rgba(47,42,40,.1); border-radius: 1rem; background: #fff; }
+        .fo-dash-list { display: grid; gap: .75rem; }
+        .fo-dash-row { border: 1px solid rgba(47,42,40,.1); border-radius: .9rem; background: #fff; padding: .9rem; }
 
+        @media (max-width: 1024px) {
+            .fo-sticky-desktop { position: static !important; }
+        }
         @media (max-width: 768px) {
             .fo-section { margin-top: 2rem; }
+            .fo-page-subtitle { font-size: .95rem; }
             .fo-btn { width: auto; }
         }
     </style>
@@ -92,12 +97,12 @@
         <a href="{{ route('home') }}" class="text-2xl font-semibold tracking-wide text-deepred">MIDA</a>
         <button class="md:hidden fo-btn fo-btn-secondary !px-3 !py-2" @click="open = !open">Menu</button>
         <nav class="hidden md:flex items-center gap-5 text-sm font-medium">
-            <a href="{{ route('contents.index') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_content') }}</a>
-            <a href="{{ route('courses.index') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_courses') }}</a>
-            <a href="{{ route('workshops.index') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_workshops') }}</a>
-            <a href="{{ route('marketplace.index') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_marketplace') }}</a>
-            <a href="{{ route('about') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_about') }}</a>
-            <a href="{{ route('contact.create') }}" class="hover:text-deepred transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/30 rounded">{{ __('messages.nav_contact') }}</a>
+            <a href="{{ route('contents.index') }}" class="hover:text-deepred fo-focus rounded px-1">{{ __('messages.nav_content') }}</a>
+            <a href="{{ route('courses.index') }}" class="hover:text-deepred fo-focus rounded px-1">{{ __('messages.nav_courses') }}</a>
+            <a href="{{ route('workshops.index') }}" class="hover:text-deepred fo-focus rounded px-1">{{ __('messages.nav_workshops') }}</a>
+            <a href="{{ route('marketplace.index') }}" class="hover:text-deepred fo-focus rounded px-1">{{ __('messages.nav_marketplace') }}</a>
+            <a href="{{ route('about') }}" class="hover:text-deepred fo-focus rounded px-1">{{ __('messages.nav_about') }}</a>
+            <a href="{{ route('contact.create') }}" class="hover:text-deepred fo-focus rounded px-1">{{ __('messages.nav_contact') }}</a>
         </nav>
         <div class="hidden md:flex items-center gap-2 text-xs">
             <a class="px-2 py-1 rounded {{ app()->getLocale() === 'fr' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'fr') }}">FR</a>
@@ -126,6 +131,15 @@
         <a href="{{ route('marketplace.index') }}" class="block py-2">{{ __('messages.nav_marketplace') }}</a>
         <a href="{{ route('about') }}" class="block py-2">{{ __('messages.nav_about') }}</a>
         <a href="{{ route('contact.create') }}" class="block py-2">{{ __('messages.nav_contact') }}</a>
+        <div class="grid grid-cols-2 gap-2 pt-3">
+            @auth
+                <a href="{{ route('dashboard.index') }}" class="fo-btn fo-btn-secondary">{{ __('messages.user_dashboard') }}</a>
+                <a href="{{ route('cart.index') }}" class="fo-btn fo-btn-primary">{{ __('messages.cart') }}</a>
+            @else
+                <a href="{{ route('login') }}" class="fo-btn fo-btn-secondary">{{ __('messages.login') }}</a>
+                <a href="{{ route('register') }}" class="fo-btn fo-btn-primary">{{ __('messages.register') }}</a>
+            @endauth
+        </div>
         <div class="flex gap-2 pt-2">
             <a class="px-2 py-1 rounded {{ app()->getLocale() === 'fr' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'fr') }}">FR</a>
             <a class="px-2 py-1 rounded {{ app()->getLocale() === 'en' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'en') }}">EN</a>

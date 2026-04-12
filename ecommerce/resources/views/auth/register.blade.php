@@ -4,8 +4,8 @@
 <section class="max-w-5xl mx-auto px-4 py-12">
     <div class="grid md:grid-cols-2 gap-6 items-stretch">
         <div class="fo-surface p-7 md:p-8 flex flex-col justify-center order-2 md:order-1">
-            <h2 class="text-xl font-semibold">Join the MIDA community.</h2>
-            <p class="text-sm text-charcoal/70 mt-3">Create one account for guided learning, live practice, curated shopping, and a premium member dashboard.</p>
+            <h2 class="text-xl font-semibold">Create your guided MIDA account.</h2>
+            <p class="text-sm text-charcoal/70 mt-3">Use one account for editorial saves, structured courses, workshop bookings, and checkout history.</p>
             @include('components.front.reassurance-list', ['items' => ['Save favorites across content, courses, and products.', 'Enroll and track progress with clear milestones.', 'Manage bookings and orders in one place.']])
         </div>
         <div class="fo-panel p-7 md:p-8 order-1 md:order-2">

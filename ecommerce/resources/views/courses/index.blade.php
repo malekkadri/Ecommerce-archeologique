@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('content')
 @include('components.front.page-header', [
+    'variant' => 'education',
     'kicker' => __('messages.nav_courses'),
     'title' => __('messages.nav_courses'),
     'subtitle' => 'Step-by-step learning paths designed for practical confidence and measurable progress.',

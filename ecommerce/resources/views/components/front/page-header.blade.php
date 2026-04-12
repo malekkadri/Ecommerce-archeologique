@@ -5,10 +5,22 @@
     'actions' => null,
     'meta' => [],
     'soft' => false,
+    'variant' => 'default',
+    'id' => null,
 ])
 
-<section class="max-w-7xl mx-auto px-4 pt-10 md:pt-14">
-    <div class="fo-panel p-6 md:p-8 relative overflow-hidden {{ $soft ? 'bg-white/85' : '' }}">
+@php
+    $variantClasses = [
+        'default' => 'fo-header-default',
+        'editorial' => 'fo-header-editorial',
+        'education' => 'fo-header-education',
+        'commerce' => 'fo-header-commerce',
+        'dashboard' => 'fo-header-dashboard',
+    ];
+@endphp
+
+<section @if($id) id="{{ $id }}" @endif class="max-w-7xl mx-auto px-4 pt-8 md:pt-12">
+    <div class="fo-panel p-6 md:p-8 relative overflow-hidden {{ $soft ? 'bg-white/85' : '' }} {{ $variantClasses[$variant] ?? $variantClasses['default'] }}">
         <div class="absolute -top-14 -right-16 h-44 w-44 rounded-full bg-terracotta/10 blur-2xl"></div>
         <div class="absolute -bottom-20 -left-14 h-44 w-44 rounded-full bg-olive/10 blur-2xl"></div>
         <div class="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -29,7 +41,7 @@
                 @endif
             </div>
             @if($actions)
-                <div class="flex flex-wrap items-center gap-3">{!! $actions !!}</div>
+                <div class="flex flex-wrap items-center gap-3" data-cta-group="header-primary">{!! $actions !!}</div>
             @endif
         </div>
     </div>

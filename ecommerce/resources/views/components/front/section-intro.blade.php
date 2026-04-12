@@ -3,9 +3,20 @@
     'title' => null,
     'subtitle' => null,
     'action' => null,
+    'variant' => 'default',
 ])
 
-<div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between mb-5">
+@php
+    $variantClass = match ($variant) {
+        'editorial' => 'fo-intro-editorial',
+        'education' => 'fo-intro-education',
+        'commerce' => 'fo-intro-commerce',
+        'dashboard' => 'fo-intro-dashboard',
+        default => '',
+    };
+@endphp
+
+<div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between mb-5 {{ $variantClass }}">
     <div class="max-w-2xl">
         @if($kicker)
             <p class="fo-kicker">{{ $kicker }}</p>
@@ -18,6 +29,6 @@
         @endif
     </div>
     @if($action)
-        <div>{!! $action !!}</div>
+        <div data-cta-group="section-intro-action">{!! $action !!}</div>
     @endif
 </div>

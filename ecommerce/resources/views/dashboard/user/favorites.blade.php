@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-@include('components.front.page-header', ['title' => __('messages.my_favorites')])
-<section class="max-w-6xl mx-auto px-4 py-8 space-y-6">
+@include('components.front.page-header', ['variant' => 'dashboard', 'title' => __('messages.my_favorites'), 'subtitle' => 'Saved items from across content, education, and commerce in one reusable shortlist.'])
+<section class="max-w-6xl mx-auto px-4 py-8 space-y-6" data-page="dashboard-favorites">
     @include('components.front.dashboard-nav')
 
     @if($favorites->isEmpty())
-        @include('components.front.empty-state', ['title' => __('messages.no_favorites_yet')])
+        @include('components.front.empty-state', ['title' => __('messages.no_favorites_yet'), 'subtitle' => 'Save courses, workshops, products, and editorial pieces to build your own journey shortlist.'])
     @else
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach($favorites as $favorite)

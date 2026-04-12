@@ -20,9 +20,9 @@
             </div>
         </div>
         <div class="fo-surface p-7 md:p-8 flex flex-col justify-center">
-            <h2 class="text-xl font-semibold">A trusted member experience.</h2>
+            <h2 class="text-xl font-semibold">Member continuity, designed in.</h2>
             <p class="text-sm text-charcoal/70 mt-3">Your account keeps learning progress, bookings, and orders connected so every next action feels clear and consistent.</p>
-            @include('components.front.reassurance-list', ['items' => ['Track progress and activity in one dashboard.', 'Save favorites to build your personal learning journey.', 'Checkout and confirmation built for transparency.']])
+            @include('components.front.reassurance-list', ['items' => ['Monitor learning, bookings, and orders from one calm dashboard.', 'Save favorites to build your personal learning journey.', 'Checkout and confirmation built for transparency.']])
         </div>
     </div>
 </section>

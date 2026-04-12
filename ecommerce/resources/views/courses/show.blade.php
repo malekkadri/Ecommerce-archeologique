@@ -6,7 +6,7 @@
         <div class="fo-panel p-8">
             <p class="fo-kicker">Course detail</p>
             <h1 class="fo-page-title mt-2">{{ $course->title }}</h1>
-            <p class="mt-4 text-charcoal/80 leading-relaxed">{{ $course->description }}</p>
+            <article class="mt-4 fo-readable text-charcoal/80"><p>{{ $course->description }}</p></article>
 
             <div class="fo-callout mt-6 text-sm">
                 <p class="font-semibold">What you get</p>
@@ -28,11 +28,12 @@
             </ul>
         </div>
 
-        <aside class="fo-panel p-6 sticky top-24">
+        <aside class="fo-panel p-6 sticky top-24 fo-sticky-desktop">
             <p class="text-sm text-charcoal/70">{{ __('messages.nav_courses') }}</p>
             <p class="text-xl font-semibold mt-1">{{ __('messages.continue_learning') }}</p>
             @include('components.front.reassurance-list', [
                 'title' => 'Enrollment confidence',
+                'tone' => 'calm',
                 'items' => ['Immediate access from your dashboard.', 'Progress saved lesson by lesson.', 'Keep the course in your favorites for quick return.']
             ])
             @auth

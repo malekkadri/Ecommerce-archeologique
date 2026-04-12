@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-@include('components.front.page-header', ['title' => __('messages.my_courses')])
+@include('components.front.page-header', ['title' => __('messages.my_courses'), 'subtitle' => __('messages.continue_learning')])
 <section class="max-w-5xl mx-auto px-4 py-8 space-y-6">
     @include('components.front.dashboard-nav')
 
     @if($enrollments->isEmpty())
-        <div class="fo-card p-8 text-center text-charcoal/70">{{ __('messages.empty_state') }}</div>
+        @include('components.front.empty-state', ['title' => __('messages.empty_state')])
     @else
         <div class="space-y-3">
             @foreach($enrollments as $enrollment)

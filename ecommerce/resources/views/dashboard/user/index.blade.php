@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-@include('components.front.page-header', ['title' => __('messages.user_dashboard'), 'subtitle' => __('messages.order_summary')])
+@include('components.front.page-header', ['kicker' => __('messages.user_dashboard'), 'title' => __('messages.user_dashboard'), 'subtitle' => __('messages.order_summary'), 'meta' => [__('messages.my_orders'), __('messages.my_courses'), __('messages.my_favorites')]])
 <section class="max-w-6xl mx-auto px-4 py-8 space-y-6">
     @include('components.front.dashboard-nav')
 
@@ -22,7 +22,7 @@
                     <span>{{ number_format($order->total, 2) }} {{ $order->currency }}</span>
                 </div>
             @empty
-                <p class="text-charcoal/70">{{ __('messages.no_orders_yet') }}</p>
+                @include('components.front.empty-state', ['title' => __('messages.no_orders_yet')])
             @endforelse
         </div>
     </div>

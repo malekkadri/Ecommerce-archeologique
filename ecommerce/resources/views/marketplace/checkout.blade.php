@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('components.front.page-header', ['title' => __('messages.checkout'), 'subtitle' => __('messages.cod_note')])
+@include('components.front.page-header', ['kicker' => __('messages.checkout'), 'title' => __('messages.checkout'), 'subtitle' => __('messages.cod_note'), 'meta' => [__('messages.payment_method'), __('messages.cash_on_delivery')]])
 <section class="max-w-6xl mx-auto px-4 py-8">
     <form action="{{ route('checkout.place') }}" method="POST" class="grid lg:grid-cols-3 gap-6">
         @csrf
@@ -37,16 +37,16 @@
         </div>
 
         <div class="fo-panel p-6 h-fit sticky top-24">
-            <h3 class="font-semibold">{{ __('messages.order_summary') }}</h3>
+            <h3 class="font-semibold text-lg">{{ __('messages.order_summary') }}</h3>
             <div class="mt-4 space-y-2 text-sm">
                 @foreach($cartItems as $item)
-                    <div class="flex justify-between gap-2">
+                    <div class="flex justify-between gap-2 border-b border-sand/60 pb-2">
                         <span>{{ optional($item->product)->name }} × {{ $item->quantity }}</span>
                         <span>{{ number_format($item->unit_price * $item->quantity, 2) }} TND</span>
                     </div>
                 @endforeach
             </div>
-            <div class="mt-4 pt-4 border-t border-sand/70 flex justify-between font-semibold">
+            <div class="mt-4 pt-4 border-t border-sand/70 flex justify-between font-semibold text-lg">
                 <span>{{ __('messages.total') }}</span>
                 <span>{{ number_format($subtotal, 2) }} TND</span>
             </div>

@@ -11,7 +11,7 @@
                 <span class="text-sm text-charcoal/70">{{ $booking->seats }} {{ __('messages.seats') }}</span>
             </div>
         @empty
-            <div class="fo-card p-8 text-center text-charcoal/70">{{ __('messages.empty_state') }}</div>
+            @include('components.front.empty-state', ['title' => __('messages.empty_state')])
         @endforelse
     </div>
 </section>

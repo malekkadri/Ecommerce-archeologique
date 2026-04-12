@@ -1,0 +1,16 @@
+@props([
+    'title' => __('messages.empty_state'),
+    'subtitle' => null,
+    'action' => null,
+])
+
+<div class="fo-empty p-8 md:p-10 text-center">
+    <div class="mx-auto h-12 w-12 rounded-full bg-sand/80 border border-sand flex items-center justify-center text-deepred text-xl">✦</div>
+    <h3 class="mt-4 text-lg font-semibold">{{ $title }}</h3>
+    @if($subtitle)
+        <p class="mt-2 text-sm text-charcoal/70 max-w-md mx-auto">{{ $subtitle }}</p>
+    @endif
+    @if($action)
+        <div class="mt-5">{!! $action !!}</div>
+    @endif
+</div>

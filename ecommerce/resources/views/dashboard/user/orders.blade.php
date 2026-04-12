@@ -6,9 +6,9 @@
     @include('components.front.dashboard-nav')
 
     @if($orders->isEmpty())
-        <div class="fo-card p-8 text-center text-charcoal/70">{{ __('messages.no_orders_yet') }}</div>
+        @include('components.front.empty-state', ['title' => __('messages.no_orders_yet')])
     @else
-        <div class="overflow-x-auto fo-card">
+        <div class="fo-table-wrap">
             <table class="min-w-full text-sm">
                 <thead class="bg-sand/60">
                     <tr>
@@ -23,7 +23,7 @@
                     @foreach($orders as $order)
                         <tr class="border-t border-sand/70">
                             <td class="px-4 py-3">{{ $order->reference }}</td>
-                            <td class="px-4 py-3">{{ ucfirst($order->status) }}</td>
+                            <td class="px-4 py-3"><span class="fo-chip">{{ ucfirst($order->status) }}</span></td>
                             <td class="px-4 py-3">{{ number_format($order->total, 2) }} {{ $order->currency }}</td>
                             <td class="px-4 py-3">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                             <td class="px-4 py-3"><a href="{{ route('orders.confirmation', $order) }}" class="text-deepred">{{ __('messages.view') }}</a></td>

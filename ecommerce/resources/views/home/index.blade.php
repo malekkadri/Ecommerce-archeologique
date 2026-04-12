@@ -4,8 +4,8 @@
 @include('components.front.page-header', [
     'id' => 'home-hero',
     'kicker' => __('messages.brand_signature'),
-    'title' => __('messages.home_hero_title'),
-    'subtitle' => __('messages.home_hero_subtitle') . ' From first inspiration to confident action, each pathway is intentionally connected.',
+    'title' => $websiteSettings['home_hero_title'] ?? __('messages.home_hero_title'),
+    'subtitle' => ($websiteSettings['home_hero_subtitle'] ?? __('messages.home_hero_subtitle')) . ' From first inspiration to confident action, each pathway is intentionally connected.',
     'variant' => 'default',
     'meta' => ['Editorial guidance', 'Expert-led learning paths', 'Live coached workshops', 'Curated marketplace'],
     'actions' => '<a href="'.route('courses.index').'" class="fo-btn fo-btn-primary" data-cta="home-primary-courses">'.__('messages.nav_courses').'</a><a href="'.route('workshops.index').'" class="fo-btn fo-btn-secondary" data-cta="home-secondary-workshops">'.__('messages.nav_workshops').'</a><a href="'.route('marketplace.index').'" class="fo-btn fo-btn-ghost" data-cta="home-tertiary-marketplace">'.__('messages.nav_marketplace').'</a>',

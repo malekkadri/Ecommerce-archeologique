@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Content;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -28,6 +29,7 @@ class ContentController extends Controller
             'title' => 'Contents',
             'routePrefix' => 'admin.contents',
             'columns' => [
+                ['label' => 'Cover', 'key' => 'featured_image_url', 'type' => 'image'],
                 ['label' => 'Title', 'key' => 'title'],
                 ['label' => 'Author', 'key' => 'author.name'],
                 ['label' => 'Category', 'key' => 'category.name'],
@@ -40,18 +42,14 @@ class ContentController extends Controller
 
     public function create()
     {
-        return view('admin.shared-form', [
-            'title' => 'Create Content',
-            'routePrefix' => 'admin.contents',
-            'method' => 'POST',
-            'item' => new Content(),
-            'fields' => $this->fields(),
-        ]);
+        return view('admin.shared-form', ['title' => 'Create Content', 'routePrefix' => 'admin.contents', 'method' => 'POST', 'item' => new Content(), 'fields' => $this->fields()]);
     }
 
     public function store(Request $request)
     {
-        Content::create($this->validated($request));
+        $data = $this->validated($request);
+        $this->persistImage($request, $data);
+        Content::create($data);
 
         return redirect()->route('admin.contents.index')->with('success', __('messages.saved'));
     }
@@ -65,6 +63,7 @@ class ContentController extends Controller
             'routePrefix' => 'admin.contents',
             'item' => $content,
             'displayFields' => [
+                ['label' => 'Cover', 'key' => 'featured_image_url', 'type' => 'image'],
                 ['label' => 'Title', 'key' => 'title'],
                 ['label' => 'Slug', 'key' => 'slug'],
                 ['label' => 'Author', 'key' => 'author.name'],
@@ -80,52 +79,46 @@ class ContentController extends Controller
 
     public function edit(Content $content)
     {
-        return view('admin.shared-form', [
-            'title' => 'Edit Content',
-            'routePrefix' => 'admin.contents',
-            'method' => 'PUT',
-            'item' => $content,
-            'fields' => $this->fields(),
-        ]);
+        return view('admin.shared-form', ['title' => 'Edit Content', 'routePrefix' => 'admin.contents', 'method' => 'PUT', 'item' => $content, 'fields' => $this->fields()]);
     }
 
     public function update(Request $request, Content $content)
     {
-        $content->update($this->validated($request, $content));
+        $data = $this->validated($request, $content);
+        $this->persistImage($request, $data, $content);
+        $content->update($data);
 
         return redirect()->route('admin.contents.edit', $content)->with('success', __('messages.updated'));
     }
 
     public function destroy(Content $content)
     {
+        if ($content->featured_image && !str_starts_with($content->featured_image, 'http')) {
+            Storage::disk('public')->delete($content->featured_image);
+        }
+
         $content->delete();
 
         return redirect()->route('admin.contents.index')->with('success', __('messages.deleted'));
     }
 
-    private function fields()
+    private function fields(): array
     {
         return [
             ['name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
             ['name' => 'slug', 'label' => 'Slug', 'type' => 'text'],
             ['name' => 'author_id', 'label' => 'Author', 'type' => 'select', 'required' => true, 'options' => User::orderBy('name')->pluck('name', 'id')->toArray()],
             ['name' => 'category_id', 'label' => 'Category', 'type' => 'select', 'options' => Category::where('type', 'content')->orderBy('name')->pluck('name', 'id')->toArray()],
-            ['name' => 'type', 'label' => 'Type', 'type' => 'select', 'required' => true, 'options' => [
-                'recipe' => 'Recipe',
-                'article' => 'Article',
-                'tradition' => 'Tradition',
-                'ingredient' => 'Ingredient',
-                'nutrition' => 'Nutrition',
-            ]],
+            ['name' => 'type', 'label' => 'Type', 'type' => 'select', 'required' => true, 'options' => ['recipe' => 'Recipe', 'article' => 'Article', 'tradition' => 'Tradition', 'ingredient' => 'Ingredient', 'nutrition' => 'Nutrition']],
             ['name' => 'excerpt', 'label' => 'Excerpt', 'type' => 'textarea'],
             ['name' => 'body', 'label' => 'Body', 'type' => 'textarea', 'required' => true],
-            ['name' => 'featured_image', 'label' => 'Featured image URL', 'type' => 'text'],
+            ['name' => 'featured_image', 'label' => 'Featured image', 'type' => 'image'],
             ['name' => 'published_at', 'label' => 'Published at', 'type' => 'datetime-local'],
             ['name' => 'is_featured', 'label' => 'Featured', 'type' => 'checkbox'],
         ];
     }
 
-    private function validated(Request $request, ?Content $content = null)
+    private function validated(Request $request, ?Content $content = null): array
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -135,7 +128,8 @@ class ContentController extends Controller
             'type' => ['required', Rule::in(['recipe', 'article', 'tradition', 'ingredient', 'nutrition'])],
             'excerpt' => ['nullable', 'string'],
             'body' => ['required', 'string'],
-            'featured_image' => ['nullable', 'string', 'max:255'],
+            'featured_image' => ['nullable', 'image', 'max:4096'],
+            'remove_image' => ['nullable', 'boolean'],
             'published_at' => ['nullable', 'date'],
             'is_featured' => ['nullable', 'boolean'],
         ]);
@@ -147,5 +141,20 @@ class ContentController extends Controller
         $data['is_featured'] = $request->boolean('is_featured');
 
         return $data;
+    }
+
+    private function persistImage(Request $request, array &$data, ?Content $content = null): void
+    {
+        if ($request->boolean('remove_image') && $content?->featured_image && !str_starts_with($content->featured_image, 'http')) {
+            Storage::disk('public')->delete($content->featured_image);
+            $data['featured_image'] = null;
+        }
+
+        if ($request->hasFile('featured_image')) {
+            if ($content?->featured_image && !str_starts_with($content->featured_image, 'http')) {
+                Storage::disk('public')->delete($content->featured_image);
+            }
+            $data['featured_image'] = $request->file('featured_image')->store('contents', 'public');
+        }
     }
 }

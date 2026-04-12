@@ -1,4 +1,5 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+@section('admin_title', __('messages.admin_dashboard'))
 
 @section('content')
 <section class="max-w-7xl mx-auto px-4 py-12 space-y-6">

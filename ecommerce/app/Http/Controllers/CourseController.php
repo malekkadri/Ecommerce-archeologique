@@ -17,7 +17,7 @@ class CourseController extends Controller
 
     public function show($slug)
     {
-        $course = Course::with('lessons')->where('slug', $slug)->firstOrFail();
+        $course = Course::with(['lessons', 'mediaGallery'])->where('slug', $slug)->firstOrFail();
 
         $isEnrolled = false;
         if (auth()->check()) {

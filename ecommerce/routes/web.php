@@ -81,4 +81,6 @@ Route::middleware(['auth', 'can:admin-area'])->prefix('admin')->name('admin.')->
     Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
     Route::resource('users', App\Http\Controllers\Admin\UserController::class);
     Route::resource('contact-inquiries', App\Http\Controllers\Admin\ContactInquiryController::class);
+    Route::get('settings', [App\Http\Controllers\Admin\WebsiteSettingController::class, 'edit'])->name('settings.edit');
+    Route::put('settings', [App\Http\Controllers\Admin\WebsiteSettingController::class, 'update'])->name('settings.update');
 });

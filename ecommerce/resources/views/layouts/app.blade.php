@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'MIDA') }}</title>
+    <title>{{ $websiteSettings['seo_default_title'] ?? ($websiteSettings['site_name'] ?? config('app.name', 'MIDA')) }}</title>
+    <meta name="description" content="{{ $websiteSettings['seo_default_description'] ?? 'MIDA learning + commerce experience.' }}">
+    @if(!empty($websiteSettings['favicon_path']))<link rel="icon" href="{{ Storage::url($websiteSettings['favicon_path']) }}">@endif
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
@@ -102,7 +104,10 @@
 <a href="#main-content" class="fo-skip-link fo-btn fo-btn-secondary">Skip to content</a>
 <header class="border-b border-sand/80 bg-white/90 backdrop-blur-xl sticky top-0 z-40" x-data="{open:false}">
     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
-        <a href="{{ route('home') }}" class="text-2xl font-semibold tracking-wide text-deepred">MIDA</a>
+        <a href="{{ route('home') }}" class="text-2xl font-semibold tracking-wide text-deepred flex items-center gap-2">
+            @if(!empty($websiteSettings['logo_path']))<img src="{{ Storage::url($websiteSettings['logo_path']) }}" alt="logo" class="h-8 w-auto">@endif
+            {{ $websiteSettings['site_name'] ?? 'MIDA' }}
+        </a>
         <button class="md:hidden fo-btn fo-btn-secondary !px-3 !py-2" @click="open = !open">Menu</button>
         <nav class="hidden md:flex items-center gap-5 text-sm font-medium">
             <a href="{{ route('contents.index') }}" class="hover:text-deepred fo-focus rounded px-1">{{ __('messages.nav_content') }}</a>
@@ -167,8 +172,8 @@
 <footer class="bg-charcoal text-sand mt-16">
     <div class="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-7">
         <div>
-            <h4 class="text-xl font-semibold">MIDA</h4>
-            <p class="mt-2 text-sm text-sand/80 leading-relaxed">{{ __('messages.footer_tagline') }}</p>
+            <h4 class="text-xl font-semibold">{{ $websiteSettings['site_name'] ?? 'MIDA' }}</h4>
+            <p class="mt-2 text-sm text-sand/80 leading-relaxed">{{ $websiteSettings['site_tagline'] ?? __('messages.footer_tagline') }}</p>
         </div>
         <div>
             <h5 class="font-semibold">{{ __('messages.footer_discover') }}</h5>
@@ -181,8 +186,9 @@
         </div>
         <div>
             <h5 class="font-semibold">{{ __('messages.footer_contact') }}</h5>
-            <p class="text-sm mt-3 text-sand/80">contact@mida.tn</p>
-            <p class="text-xs mt-5 text-sand/60">© {{ now()->year }} MIDA</p>
+            <p class="text-sm mt-3 text-sand/80">{{ $websiteSettings['contact_email'] ?? 'contact@mida.tn' }}</p>
+            @if(!empty($websiteSettings['contact_phone']))<p class="text-sm mt-1 text-sand/80">{{ $websiteSettings['contact_phone'] }}</p>@endif
+            <p class="text-xs mt-5 text-sand/60">{{ $websiteSettings['footer_text'] ?? ('© '.now()->year.' '.($websiteSettings['site_name'] ?? 'MIDA')) }}</p>
         </div>
     </div>
 </footer>

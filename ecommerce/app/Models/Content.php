@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Content extends Model
 {
@@ -31,5 +32,14 @@ class Content extends Model
     public function favorites()
     {
         return $this->morphMany(Favorite::class, 'favoritable');
+    }
+
+    public function getFeaturedImageUrlAttribute()
+    {
+        if (!$this->featured_image) {
+            return null;
+        }
+
+        return str_starts_with($this->featured_image, 'http') ? $this->featured_image : Storage::url($this->featured_image);
     }
 }

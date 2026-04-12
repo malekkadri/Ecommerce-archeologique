@@ -5,7 +5,7 @@
     'variant' => 'commerce',
     'kicker' => __('messages.nav_marketplace'),
     'title' => __('messages.nav_marketplace'),
-    'subtitle' => 'A commerce-focused catalog of practical essentials selected to support your learning outcomes and everyday execution.',
+    'subtitle' => $websiteSettings['marketplace_intro'] ?? 'A commerce-focused catalog of practical essentials selected to support your learning outcomes and everyday execution.',
     'meta' => [__('messages.search_products'), __('messages.stock'), 'Purchase-ready details'],
 ])
 @include('components.front.proof-strip', [

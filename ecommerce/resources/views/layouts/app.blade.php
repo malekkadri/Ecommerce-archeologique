@@ -126,6 +126,7 @@
         <div class="hidden md:flex items-center gap-2 text-xs">
             <a class="px-2 py-1 rounded {{ app()->getLocale() === 'fr' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'fr') }}">FR</a>
             <a class="px-2 py-1 rounded {{ app()->getLocale() === 'en' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'en') }}">EN</a>
+            <a class="px-2 py-1 rounded {{ app()->getLocale() === 'ar' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'ar') }}">AR</a>
             @auth
                 @if(auth()->user()->isAdmin())
                     <a class="fo-btn fo-btn-secondary !py-1.5" href="{{ route('admin.dashboard') }}">{{ __('messages.admin_dashboard') }}</a>
@@ -162,6 +163,7 @@
         <div class="flex gap-2 pt-2">
             <a class="px-2 py-1 rounded {{ app()->getLocale() === 'fr' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'fr') }}">FR</a>
             <a class="px-2 py-1 rounded {{ app()->getLocale() === 'en' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'en') }}">EN</a>
+            <a class="px-2 py-1 rounded {{ app()->getLocale() === 'ar' ? 'bg-terracotta text-white' : 'bg-sand' }}" href="{{ route('locale.switch', 'ar') }}">AR</a>
         </div>
     </div>
 </header>

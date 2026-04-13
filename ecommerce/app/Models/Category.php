@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasLocalizedAttributes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLocalizedAttributes;
 
     protected $fillable = ['name', 'slug', 'type', 'image_path'];
 
@@ -35,5 +36,10 @@ class Category extends Model
     public function getImageUrlAttribute()
     {
         return $this->image_path ? Storage::url($this->image_path) : null;
+    }
+
+    public function getNameAttribute($value)
+    {
+        return $this->localizedValue($value);
     }
 }

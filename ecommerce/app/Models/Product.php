@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasLocalizedAttributes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasLocalizedAttributes;
 
     protected $fillable = ['vendor_profile_id', 'category_id', 'name', 'slug', 'description', 'image_path', 'price', 'stock', 'sku', 'is_featured', 'is_active'];
     protected $casts = ['price' => 'decimal:2', 'is_featured' => 'boolean', 'is_active' => 'boolean'];
@@ -37,5 +38,15 @@ class Product extends Model
     public function getImageUrlAttribute()
     {
         return $this->image_path ? Storage::url($this->image_path) : null;
+    }
+
+    public function getNameAttribute($value)
+    {
+        return $this->localizedValue($value);
+    }
+
+    public function getDescriptionAttribute($value)
+    {
+        return $this->localizedValue($value);
     }
 }

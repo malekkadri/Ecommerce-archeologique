@@ -109,6 +109,7 @@ class UserController extends Controller
             ['name' => 'locale', 'label' => 'Locale', 'type' => 'select', 'required' => true, 'options' => [
                 'fr' => 'Français',
                 'en' => 'English',
+                'ar' => 'العربية',
             ]],
             ['name' => 'password', 'label' => 'Password', 'type' => 'password', 'required' => !$isEdit],
             ['name' => 'password_confirmation', 'label' => 'Confirm password', 'type' => 'password', 'required' => !$isEdit],
@@ -123,7 +124,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email:rfc,dns', 'max:255', Rule::unique('users', 'email')->ignore(optional($user)->id)],
             'role' => ['required', Rule::in([User::ROLE_USER, User::ROLE_VENDOR, User::ROLE_ADMIN])],
-            'locale' => ['required', Rule::in(['fr', 'en'])],
+            'locale' => ['required', Rule::in(['fr', 'en', 'ar'])],
         ];
 
         if ($user) {

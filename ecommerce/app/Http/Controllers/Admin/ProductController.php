@@ -133,14 +133,14 @@ class ProductController extends Controller
     private function fields(): array
     {
         return [
-            ['name' => 'name', 'label' => 'Name', 'type' => 'text', 'required' => true],
+            ['name' => 'name', 'label' => 'Name', 'type' => 'text', 'required' => true, 'translatable' => true],
             ['name' => 'slug', 'label' => 'Slug', 'type' => 'text'],
             ['name' => 'sku', 'label' => 'SKU', 'type' => 'text'],
             ['name' => 'vendor_profile_id', 'label' => 'Vendor', 'type' => 'select', 'required' => true, 'options' => VendorProfile::orderBy('shop_name')->pluck('shop_name', 'id')->toArray()],
             ['name' => 'category_id', 'label' => 'Category', 'type' => 'select', 'options' => Category::where('type', 'product')->orWhere('type', 'marketplace')->orderBy('name')->pluck('name', 'id')->toArray()],
             ['name' => 'price', 'label' => 'Price (TND)', 'type' => 'number', 'required' => true, 'step' => '0.01', 'min' => '0'],
             ['name' => 'stock', 'label' => 'Stock', 'type' => 'number', 'required' => true, 'min' => '0'],
-            ['name' => 'description', 'label' => 'Description', 'type' => 'textarea'],
+            ['name' => 'description', 'label' => 'Description', 'type' => 'textarea', 'translatable' => true],
             ['name' => 'image', 'label' => 'Primary image', 'type' => 'image'],
             ['name' => 'gallery_images', 'label' => 'Gallery images', 'type' => 'gallery'],
             ['name' => 'is_featured', 'label' => 'Featured product', 'type' => 'checkbox'],
@@ -151,14 +151,20 @@ class ProductController extends Controller
     private function validated(Request $request, ?Product $product = null): array
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'array'],
+            'name.fr' => ['required', 'string', 'max:255'],
+            'name.en' => ['nullable', 'string', 'max:255'],
+            'name.ar' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'alpha_dash', Rule::unique('products', 'slug')->ignore(optional($product)->id)],
             'sku' => ['nullable', 'string', 'max:255', Rule::unique('products', 'sku')->ignore(optional($product)->id)],
             'vendor_profile_id' => ['required', 'exists:vendor_profiles,id'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'price' => ['required', 'numeric', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
-            'description' => ['nullable', 'string'],
+            'description' => ['nullable', 'array'],
+            'description.fr' => ['nullable', 'string'],
+            'description.en' => ['nullable', 'string'],
+            'description.ar' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:4096'],
             'gallery_images' => ['nullable', 'array'],
             'gallery_images.*' => ['image', 'max:4096'],
@@ -170,13 +176,28 @@ class ProductController extends Controller
         ]);
 
         if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['name']) . '-' . now()->format('His');
+            $defaultName = $data['name']['fr'] ?? $data['name']['en'] ?? 'product';
+            $data['slug'] = Str::slug($defaultName) . '-' . now()->format('His');
         }
+
+        $data['name'] = $this->encodeTranslations($data['name']);
+        $data['description'] = $this->encodeTranslations($data['description'] ?? []);
 
         $data['is_featured'] = $request->boolean('is_featured');
         $data['is_active'] = $request->boolean('is_active', true);
 
         return $data;
+    }
+
+    private function encodeTranslations(array $translations): string
+    {
+        $normalized = [
+            'fr' => trim((string) ($translations['fr'] ?? '')),
+            'en' => trim((string) ($translations['en'] ?? '')),
+            'ar' => trim((string) ($translations['ar'] ?? '')),
+        ];
+
+        return json_encode($normalized, JSON_UNESCAPED_UNICODE);
     }
 
     private function persistUploads(Request $request, array &$data, ?Product $product = null): void

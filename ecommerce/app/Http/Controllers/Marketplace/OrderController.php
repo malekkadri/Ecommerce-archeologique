@@ -34,9 +34,11 @@ class OrderController extends Controller
 
     public function storeCartItem(StoreCartItemRequest $request)
     {
-        $product = Product::where('is_active', true)->findOrFail($request->integer('product_id'));
+        $productId = (int) $request->input('product_id');
+        $quantity = (int) $request->input('quantity');
+        $product = Product::where('is_active', true)->findOrFail($productId);
 
-        if ($product->stock < $request->integer('quantity')) {
+        if ($product->stock < $quantity) {
             return back()->with('error', __('messages.insufficient_stock'));
         }
 
@@ -45,7 +47,7 @@ class OrderController extends Controller
             'product_id' => $product->id,
         ]);
 
-        $newQuantity = ((int) $item->quantity ?: 0) + $request->integer('quantity');
+        $newQuantity = ((int) $item->quantity ?: 0) + $quantity;
 
         if ($newQuantity > $product->stock) {
             return back()->with('error', __('messages.insufficient_stock'));
@@ -62,13 +64,14 @@ class OrderController extends Controller
     public function updateCartItem(UpdateCartItemRequest $request, CartItem $cartItem)
     {
         $this->authorizeCartItem($cartItem);
+        $quantity = (int) $request->input('quantity');
 
-        if (! $cartItem->product || $cartItem->product->stock < $request->integer('quantity')) {
+        if (! $cartItem->product || $cartItem->product->stock < $quantity) {
             return back()->with('error', __('messages.insufficient_stock'));
         }
 
         $cartItem->update([
-            'quantity' => $request->integer('quantity'),
+            'quantity' => $quantity,
             'unit_price' => $cartItem->product->price,
         ]);
 

@@ -82,6 +82,7 @@ Route::middleware(['auth', 'can:admin-area'])->prefix('admin')->name('admin.')->
     Route::resource('courses', App\Http\Controllers\Admin\CourseController::class);
     Route::resource('workshops', App\Http\Controllers\Admin\WorkshopController::class);
     Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
+    Route::resource('home-sliders', App\Http\Controllers\Admin\HomeSliderController::class);
     Route::resource('users', App\Http\Controllers\Admin\UserController::class);
     Route::resource('contact-inquiries', App\Http\Controllers\Admin\ContactInquiryController::class);
     Route::get('settings', [App\Http\Controllers\Admin\WebsiteSettingController::class, 'edit'])->name('settings.edit');

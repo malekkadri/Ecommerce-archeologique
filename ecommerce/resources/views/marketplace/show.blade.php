@@ -39,8 +39,22 @@
                         <input type="hidden" name="id" value="{{ $product->id }}">
                         <button class="fo-btn fo-btn-secondary">{{ __('messages.toggle_favorite') }}</button>
                     </form>
-                    <a href="{{ route('cart.index') }}" class="fo-btn fo-btn-ghost">{{ __('messages.cart') }}</a>
+                    <a href="{{ route('cart.index') }}" class="fo-btn fo-btn-ghost inline-flex items-center gap-2">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <circle cx="9" cy="20" r="1"></circle>
+                            <circle cx="18" cy="20" r="1"></circle>
+                            <path d="M2 3h2l2.4 11.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.7L21 7H7"></path>
+                        </svg>
+                        <span>{{ __('messages.cart') }}</span>
+                        @if(($cartQuantity ?? 0) > 0)
+                            <span class="inline-flex items-center justify-center px-2 py-0.5 text-[11px] font-semibold rounded-full bg-deepred text-white">{{ $cartQuantity }}</span>
+                        @endif
+                    </a>
                 </div>
+
+                @if(($cartQuantity ?? 0) > 0)
+                    <p class="mt-3 text-sm text-deepred font-medium">{{ $cartQuantity }} {{ strtolower(__('messages.products')) }} {{ strtolower(__('messages.cart')) }}</p>
+                @endif
 
                 <form action="{{ route('cart.store') }}" method="POST" class="mt-5 fo-surface p-4 flex flex-wrap items-end gap-3" id="product-add-to-cart">
                     @csrf

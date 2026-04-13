@@ -91,6 +91,22 @@
         .fo-chatbot-bubble { padding: .62rem .75rem; border-radius: .72rem; max-width: 90%; font-size: .9rem; line-height: 1.45; white-space: pre-wrap; }
         .fo-chatbot-user { align-self: flex-end; background: #2F2A28; color: #fff; }
         .fo-chatbot-bot { align-self: flex-start; background: #fff; border: 1px solid rgba(47,42,40,.12); color: #2F2A28; }
+        .fo-cart-link { position: relative; display: inline-flex; align-items: center; gap: .42rem; }
+        .fo-cart-icon { width: 1rem; height: 1rem; }
+        .fo-cart-badge {
+            min-width: 1.15rem;
+            height: 1.15rem;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 .28rem;
+            font-size: .66rem;
+            font-weight: 700;
+            background: #8C2F39;
+            color: #fff;
+            box-shadow: 0 6px 14px rgba(140,47,57,.25);
+        }
 
         @media (max-width: 1024px) {
             .fo-sticky-desktop { position: static !important; }
@@ -135,7 +151,17 @@
                 @else
                     <a class="fo-btn fo-btn-secondary !py-1.5" href="{{ route('dashboard.index') }}">{{ __('messages.user_dashboard') }}</a>
                 @endif
-                <a class="fo-btn fo-btn-secondary !py-1.5" href="{{ route('cart.index') }}">{{ __('messages.cart') }}</a>
+                <a class="fo-btn fo-btn-secondary !py-1.5 fo-cart-link" href="{{ route('cart.index') }}" aria-label="{{ __('messages.cart') }} ({{ $cartQuantity ?? 0 }})">
+                    <svg class="fo-cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="9" cy="20" r="1"></circle>
+                        <circle cx="18" cy="20" r="1"></circle>
+                        <path d="M2 3h2l2.4 11.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.7L21 7H7"></path>
+                    </svg>
+                    <span>{{ __('messages.cart') }}</span>
+                    @if(($cartQuantity ?? 0) > 0)
+                        <span class="fo-cart-badge">{{ $cartQuantity }}</span>
+                    @endif
+                </a>
                 <form method="POST" action="{{ route('logout') }}">@csrf<button class="fo-btn fo-btn-ghost !py-1.5">{{ __('messages.logout') }}</button></form>
             @else
                 <a class="fo-btn fo-btn-secondary !py-1.5" href="{{ route('login') }}">{{ __('messages.login') }}</a>
@@ -154,7 +180,17 @@
         <div class="grid grid-cols-2 gap-2 pt-3">
             @auth
                 <a href="{{ route('dashboard.index') }}" class="fo-btn fo-btn-secondary">{{ __('messages.user_dashboard') }}</a>
-                <a href="{{ route('cart.index') }}" class="fo-btn fo-btn-primary">{{ __('messages.cart') }}</a>
+                <a href="{{ route('cart.index') }}" class="fo-btn fo-btn-primary fo-cart-link">
+                    <svg class="fo-cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="9" cy="20" r="1"></circle>
+                        <circle cx="18" cy="20" r="1"></circle>
+                        <path d="M2 3h2l2.4 11.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.7L21 7H7"></path>
+                    </svg>
+                    <span>{{ __('messages.cart') }}</span>
+                    @if(($cartQuantity ?? 0) > 0)
+                        <span class="fo-cart-badge">{{ $cartQuantity }}</span>
+                    @endif
+                </a>
             @else
                 <a href="{{ route('login') }}" class="fo-btn fo-btn-secondary">{{ __('messages.login') }}</a>
                 <a href="{{ route('register') }}" class="fo-btn fo-btn-primary">{{ __('messages.register') }}</a>

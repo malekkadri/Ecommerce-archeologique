@@ -125,6 +125,7 @@
         <nav class="space-y-1">
             <a class="admin-nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Dashboard</a>
             <a class="admin-nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">Products</a>
+            <a class="admin-nav-link {{ request()->routeIs('admin.home-sliders.*') ? 'active' : '' }}" href="{{ route('admin.home-sliders.index') }}">Home Sliders</a>
             <a class="admin-nav-link {{ request()->routeIs('admin.courses.*') ? 'active' : '' }}" href="{{ route('admin.courses.index') }}">Courses</a>
             <a class="admin-nav-link {{ request()->routeIs('admin.workshops.*') ? 'active' : '' }}" href="{{ route('admin.workshops.index') }}">Workshops</a>
             <a class="admin-nav-link {{ request()->routeIs('admin.contents.*') ? 'active' : '' }}" href="{{ route('admin.contents.index') }}">Contents</a>

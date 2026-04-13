@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 
 class FrontofficeChatbotController extends Controller
 {
+    private const MAX_HISTORY_MESSAGES = 12;
+
     public function __invoke(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -26,6 +28,19 @@ class FrontofficeChatbotController extends Controller
             ], 503);
         }
 
+        $history = array_slice($validated['history'] ?? [], -self::MAX_HISTORY_MESSAGES);
+
+        // The front-end currently sends the latest user message in `history`
+        // and as `message`. Keep only one copy for better model quality.
+        if (! empty($history)) {
+            $lastHistoryMessage = $history[array_key_last($history)];
+
+            if (($lastHistoryMessage['role'] ?? null) === 'user'
+                && trim((string) ($lastHistoryMessage['content'] ?? '')) === trim($validated['message'])) {
+                array_pop($history);
+            }
+        }
+
         $messages = [
             [
                 'role' => 'system',
@@ -33,7 +48,7 @@ class FrontofficeChatbotController extends Controller
             ],
         ];
 
-        foreach ($validated['history'] ?? [] as $historyMessage) {
+        foreach ($history as $historyMessage) {
             $messages[] = [
                 'role' => $historyMessage['role'],
                 'content' => $historyMessage['content'],
@@ -47,7 +62,9 @@ class FrontofficeChatbotController extends Controller
 
         try {
             $response = Http::withToken($apiKey)
-                ->timeout(20)
+                ->connectTimeout((int) config('services.groq.connect_timeout', 5))
+                ->timeout((int) config('services.groq.timeout', 20))
+                ->retry((int) config('services.groq.retries', 1), 250)
                 ->acceptJson()
                 ->post('https://api.groq.com/openai/v1/chat/completions', [
                     'model' => config('services.groq.model', 'llama-3.3-70b-versatile'),
@@ -58,7 +75,7 @@ class FrontofficeChatbotController extends Controller
             if ($response->failed()) {
                 Log::warning('Groq chatbot request failed', [
                     'status' => $response->status(),
-                    'body' => $response->json(),
+                    'body' => $response->json() ?? $response->body(),
                 ]);
 
                 return response()->json([
@@ -67,7 +84,7 @@ class FrontofficeChatbotController extends Controller
             }
 
             return response()->json([
-                'reply' => data_get($response->json(), 'choices.0.message.content', ''),
+                'reply' => trim((string) data_get($response->json(), 'choices.0.message.content', '')),
             ]);
         } catch (\Throwable $exception) {
             Log::error('Groq chatbot exception', [

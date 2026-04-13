@@ -62,7 +62,9 @@ class FrontofficeChatbotController extends Controller
 
         try {
             $response = Http::withToken($apiKey)
-                ->connectTimeout((int) config('services.groq.connect_timeout', 5))
+                ->withOptions([
+                    'connect_timeout' => (int) config('services.groq.connect_timeout', 5),
+                ])
                 ->timeout((int) config('services.groq.timeout', 20))
                 ->retry((int) config('services.groq.retries', 1), 250)
                 ->acceptJson()

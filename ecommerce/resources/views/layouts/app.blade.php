@@ -107,14 +107,14 @@
     </style>
 </head>
 <body class="text-charcoal min-h-screen flex flex-col">
-<a href="#main-content" class="fo-skip-link fo-btn fo-btn-secondary">Skip to content</a>
+<a href="#main-content" class="fo-skip-link fo-btn fo-btn-secondary">{{ __('messages.skip_to_content') }}</a>
 <header class="border-b border-sand/80 bg-white/90 backdrop-blur-xl sticky top-0 z-40" x-data="{open:false}">
     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
         <a href="{{ route('home') }}" class="text-2xl font-semibold tracking-wide text-deepred flex items-center gap-2">
             @if(!empty($websiteSettings['logo_path']))<img src="{{ Storage::url($websiteSettings['logo_path']) }}" alt="logo" class="h-8 w-auto">@endif
             {{ $websiteSettings['site_name'] ?? 'MIDA' }}
         </a>
-        <button class="md:hidden fo-btn fo-btn-secondary !px-3 !py-2" @click="open = !open">Menu</button>
+        <button class="md:hidden fo-btn fo-btn-secondary !px-3 !py-2" @click="open = !open">{{ __('messages.menu') }}</button>
         <nav class="hidden md:flex items-center gap-5 text-sm font-medium">
             <a href="{{ route('contents.index') }}" class="hover:text-deepred fo-focus rounded px-1">{{ __('messages.nav_content') }}</a>
             <a href="{{ route('courses.index') }}" class="hover:text-deepred fo-focus rounded px-1">{{ __('messages.nav_courses') }}</a>
@@ -209,24 +209,24 @@
     <div class="fo-chatbot-panel" x-show="open" x-transition.opacity.scale.95.origin.bottom.right>
         <div class="px-4 py-3 bg-charcoal text-sand flex items-start justify-between gap-3">
             <div>
-                <p class="text-xs uppercase tracking-[0.16em] text-sand/70">Assistant</p>
-                <p class="font-semibold text-sm">Need help finding something?</p>
+                <p class="text-xs uppercase tracking-[0.16em] text-sand/70">{{ __('messages.assistant') }}</p>
+                <p class="font-semibold text-sm">{{ __('messages.chatbot_heading') }}</p>
             </div>
-            <button class="text-sand/70 hover:text-white text-lg leading-none" @click="open = false" aria-label="Close chat">×</button>
+            <button class="text-sand/70 hover:text-white text-lg leading-none" @click="open = false" aria-label="{{ __('messages.close_chat') }}">×</button>
         </div>
         <div class="fo-chatbot-list" x-ref="messagesContainer">
             <template x-for="(entry, index) in messages" :key="index">
                 <div class="fo-chatbot-bubble" :class="entry.role === 'user' ? 'fo-chatbot-user' : 'fo-chatbot-bot'" x-text="entry.content"></div>
             </template>
-            <div x-show="loading" class="fo-chatbot-bubble fo-chatbot-bot">Typing…</div>
+            <div x-show="loading" class="fo-chatbot-bubble fo-chatbot-bot">{{ __('messages.typing') }}</div>
         </div>
         <form class="p-3 border-t border-sand/90 bg-white" @submit.prevent="sendMessage">
-            <label class="sr-only" for="chatbot-input">Message</label>
+            <label class="sr-only" for="chatbot-input">{{ __('messages.message') }}</label>
             <div class="flex items-end gap-2">
-                <textarea id="chatbot-input" class="fo-textarea !min-h-[2.8rem] !max-h-28 !rounded-lg !text-sm" x-model="draft" rows="1" placeholder="Ask about products, courses, workshops..." :disabled="loading"></textarea>
-                <button type="submit" class="fo-btn fo-btn-primary !py-2 !px-3 !text-xs" :disabled="loading || !draft.trim()">Send</button>
+                <textarea id="chatbot-input" class="fo-textarea !min-h-[2.8rem] !max-h-28 !rounded-lg !text-sm" x-model="draft" rows="1" placeholder="{{ __('messages.chatbot_placeholder') }}" :disabled="loading"></textarea>
+                <button type="submit" class="fo-btn fo-btn-primary !py-2 !px-3 !text-xs" :disabled="loading || !draft.trim()">{{ __('messages.send') }}</button>
             </div>
-            <p class="text-xs text-charcoal/55 mt-2">Powered by Groq</p>
+            <p class="text-xs text-charcoal/55 mt-2">{{ __('messages.powered_by_groq') }}</p>
         </form>
     </div>
 
@@ -234,7 +234,7 @@
         type="button"
         class="fo-chatbot-launcher"
         @click="open = !open; $nextTick(() => scrollToBottom())"
-        aria-label="Toggle assistant"
+        aria-label="{{ __('messages.toggle_assistant') }}"
     >💬</button>
 </div>
 
@@ -245,7 +245,7 @@
             loading: false,
             draft: '',
             messages: [
-                { role: 'assistant', content: 'Hi! I can help you navigate the front office, find products, and answer quick questions.' },
+                { role: 'assistant', content: @json(__('messages.chatbot_welcome')) },
             ],
             async sendMessage() {
                 const content = this.draft.trim();
@@ -274,17 +274,17 @@
 
                     const payload = await response.json();
                     if (!response.ok) {
-                        throw new Error(payload.message || 'The assistant is unavailable right now.');
+                        throw new Error(payload.message || @json(__('messages.chatbot_unavailable')));
                     }
 
                     this.messages.push({
                         role: 'assistant',
-                        content: payload.reply || 'I could not generate a response. Please try again.',
+                        content: payload.reply || @json(__('messages.chatbot_no_response')),
                     });
                 } catch (error) {
                     this.messages.push({
                         role: 'assistant',
-                        content: error.message || 'Unexpected error. Please try again later.',
+                        content: error.message || @json(__('messages.chatbot_unexpected_error')),
                     });
                 } finally {
                     this.loading = false;

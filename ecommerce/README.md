@@ -33,7 +33,7 @@ Role checks use Gates + middleware (`can:vendor-area`, `can:admin-area`, `role:*
 - Vendor: `vendor_profiles`
 - Editorial: `contents`, `categories`, `tags`, `content_tag`
 - E-learning: `courses`, `lessons`, `enrollments`, `lesson_progress`
-- Workshops: `workshops`, `workshop_bookings`
+- Workshops: `workshops`, `workshop_bookings`, `workshop_subscriptions`
 - Marketplace: `products`, `cart_items`, `orders`, `order_items`
 - Contact: `contact_inquiries`
 - Favorites: `favorites` (polymorphic)
@@ -69,6 +69,18 @@ After seeding:
 - Checkout captures billing/shipping details and places an order in a DB transaction.
 - Order items are persisted and product stock is decremented on successful placement.
 - Users can review order confirmation and full order history from dashboard.
+
+
+## Workshop email subscriptions
+- Workshop pages now include a public subscription form (name, email, phone, seats).
+- Each successful subscription sends a confirmation email using Laravel Mail.
+- For Gmail SMTP, use these `.env` values:
+  - `MAIL_MAILER=smtp`
+  - `MAIL_HOST=smtp.gmail.com`
+  - `MAIL_PORT=587`
+  - `MAIL_ENCRYPTION=tls`
+  - `MAIL_USERNAME=<your-gmail-address>`
+  - `MAIL_PASSWORD=<your-google-app-password>`
 
 ## Notes for Laravel 9
 If upgrading base dependencies to Laravel 9, this code structure remains compatible (no PHP 8.1-only syntax used).

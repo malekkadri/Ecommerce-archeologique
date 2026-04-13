@@ -2,13 +2,6 @@
 @section('content')
 @include('components.front.page-header', ['kicker' => __('messages.nav_workshops'), 'title' => __('messages.nav_workshops'), 'subtitle' => $websiteSettings['workshops_intro'] ?? 'Live, practice-first sessions for direct feedback and real-time confidence.', 'meta' => [__('messages.seats'), __('messages.reserve'), 'Guided practice']])
 <section class="max-w-7xl mx-auto px-4 py-8">
-    @include('components.front.section-intro', [
-        'kicker' => 'Live learning',
-        'title' => 'Join hands-on workshops with guided accountability.',
-        'subtitle' => 'Each session is designed for applied outcomes, live support, and concrete next steps you can execute immediately.',
-        'variant' => 'education',
-    ])
-
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         @forelse($workshops as $workshop)
             <a href="{{ route('workshops.show',$workshop->slug) }}" class="fo-card fo-card-hover p-6 flex flex-col h-full">

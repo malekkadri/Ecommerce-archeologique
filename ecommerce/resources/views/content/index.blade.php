@@ -8,13 +8,6 @@
     'meta' => [__('messages.search'), __('messages.filter'), 'Expert perspective'],
 ])
 
-@include('components.front.proof-strip', ['variant' => 'editorial', 'items' => [
-    ['value' => $contents->total(), 'label' => 'Published pieces'],
-    ['value' => strtoupper((string) request('type', 'all')), 'label' => 'Current focus'],
-    ['value' => 'Read', 'label' => 'Context before commitment'],
-    ['value' => 'Save', 'label' => 'Revisit in favorites'],
-]])
-
 <section class="max-w-7xl mx-auto px-4 py-8">
 <form class="fo-surface p-4 md:p-5 grid md:grid-cols-4 gap-3 mb-7 items-end">
     <div class="md:col-span-2">

@@ -34,6 +34,9 @@ return [
         'api_key' => env('GROQ_API_KEY'),
         'model' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
         'system_prompt' => env('GROQ_SYSTEM_PROMPT', 'You are a helpful assistant for this website. Keep answers concise and practical.'),
+        'connect_timeout' => env('GROQ_CONNECT_TIMEOUT', 5),
+        'timeout' => env('GROQ_TIMEOUT', 20),
+        'retries' => env('GROQ_RETRIES', 1),
     ],
 
 ];

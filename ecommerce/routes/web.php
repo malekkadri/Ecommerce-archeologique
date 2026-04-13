@@ -8,6 +8,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\Dashboard\AdminDashboardController;
 use App\Http\Controllers\Dashboard\UserDashboardController;
 use App\Http\Controllers\Dashboard\VendorDashboardController;
+use App\Http\Controllers\FrontofficeChatbotController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LocaleController;
@@ -46,6 +47,7 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/frontoffice/chatbot', FrontofficeChatbotController::class)->name('frontoffice.chatbot');
 
 Route::middleware('auth')->group(function () {
     Route::post('/courses/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');

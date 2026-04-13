@@ -85,6 +85,12 @@
         .fo-table-wrap { overflow-x: auto; border: 1px solid rgba(47,42,40,.1); border-radius: 1rem; background: #fff; }
         .fo-dash-list { display: grid; gap: .75rem; }
         .fo-dash-row { border: 1px solid rgba(47,42,40,.1); border-radius: .9rem; background: #fff; padding: .9rem; }
+        .fo-chatbot-launcher { position: fixed; right: 1rem; bottom: 1rem; z-index: 45; border: 0; background: linear-gradient(135deg, #C96A4A, #8C2F39); color: #fff; box-shadow: 0 14px 30px rgba(140,47,57,.35); border-radius: 999px; width: 3.4rem; height: 3.4rem; font-size: 1.25rem; }
+        .fo-chatbot-panel { position: fixed; right: 1rem; bottom: 5.2rem; z-index: 45; width: min(26rem, calc(100vw - 1.5rem)); max-height: min(70vh, 40rem); display: flex; flex-direction: column; border-radius: 1rem; border: 1px solid rgba(47,42,40,.12); background: rgba(255,255,255,.98); box-shadow: 0 20px 48px rgba(47,42,40,.24); overflow: hidden; }
+        .fo-chatbot-list { overflow-y: auto; padding: .9rem; display: flex; flex-direction: column; gap: .65rem; background: linear-gradient(180deg, rgba(237,224,212,.45), rgba(255,255,255,.95)); }
+        .fo-chatbot-bubble { padding: .62rem .75rem; border-radius: .72rem; max-width: 90%; font-size: .9rem; line-height: 1.45; white-space: pre-wrap; }
+        .fo-chatbot-user { align-self: flex-end; background: #2F2A28; color: #fff; }
+        .fo-chatbot-bot { align-self: flex-start; background: #fff; border: 1px solid rgba(47,42,40,.12); color: #2F2A28; }
 
         @media (max-width: 1024px) {
             .fo-sticky-desktop { position: static !important; }
@@ -192,5 +198,105 @@
         </div>
     </div>
 </footer>
+
+<div
+    x-data="frontofficeChatbot()"
+    class="fo-chatbot"
+    x-cloak
+>
+    <div class="fo-chatbot-panel" x-show="open" x-transition.opacity.scale.95.origin.bottom.right>
+        <div class="px-4 py-3 bg-charcoal text-sand flex items-start justify-between gap-3">
+            <div>
+                <p class="text-xs uppercase tracking-[0.16em] text-sand/70">Assistant</p>
+                <p class="font-semibold text-sm">Need help finding something?</p>
+            </div>
+            <button class="text-sand/70 hover:text-white text-lg leading-none" @click="open = false" aria-label="Close chat">×</button>
+        </div>
+        <div class="fo-chatbot-list" x-ref="messagesContainer">
+            <template x-for="(entry, index) in messages" :key="index">
+                <div class="fo-chatbot-bubble" :class="entry.role === 'user' ? 'fo-chatbot-user' : 'fo-chatbot-bot'" x-text="entry.content"></div>
+            </template>
+            <div x-show="loading" class="fo-chatbot-bubble fo-chatbot-bot">Typing…</div>
+        </div>
+        <form class="p-3 border-t border-sand/90 bg-white" @submit.prevent="sendMessage">
+            <label class="sr-only" for="chatbot-input">Message</label>
+            <div class="flex items-end gap-2">
+                <textarea id="chatbot-input" class="fo-textarea !min-h-[2.8rem] !max-h-28 !rounded-lg !text-sm" x-model="draft" rows="1" placeholder="Ask about products, courses, workshops..." :disabled="loading"></textarea>
+                <button type="submit" class="fo-btn fo-btn-primary !py-2 !px-3 !text-xs" :disabled="loading || !draft.trim()">Send</button>
+            </div>
+            <p class="text-xs text-charcoal/55 mt-2">Powered by Groq</p>
+        </form>
+    </div>
+
+    <button
+        type="button"
+        class="fo-chatbot-launcher"
+        @click="open = !open; $nextTick(() => scrollToBottom())"
+        aria-label="Toggle assistant"
+    >💬</button>
+</div>
+
+<script>
+    function frontofficeChatbot() {
+        return {
+            open: false,
+            loading: false,
+            draft: '',
+            messages: [
+                { role: 'assistant', content: 'Hi! I can help you navigate the front office, find products, and answer quick questions.' },
+            ],
+            async sendMessage() {
+                const content = this.draft.trim();
+                if (!content || this.loading) return;
+
+                this.messages.push({ role: 'user', content });
+                this.draft = '';
+                this.loading = true;
+                this.scrollToBottom();
+
+                try {
+                    const response = await fetch(@json(route('frontoffice.chatbot')), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': @json(csrf_token()),
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: content,
+                            history: this.messages
+                                .filter((message) => message.role === 'user' || message.role === 'assistant')
+                                .slice(-8),
+                        }),
+                    });
+
+                    const payload = await response.json();
+                    if (!response.ok) {
+                        throw new Error(payload.message || 'The assistant is unavailable right now.');
+                    }
+
+                    this.messages.push({
+                        role: 'assistant',
+                        content: payload.reply || 'I could not generate a response. Please try again.',
+                    });
+                } catch (error) {
+                    this.messages.push({
+                        role: 'assistant',
+                        content: error.message || 'Unexpected error. Please try again later.',
+                    });
+                } finally {
+                    this.loading = false;
+                    this.scrollToBottom();
+                }
+            },
+            scrollToBottom() {
+                this.$nextTick(() => {
+                    if (!this.$refs.messagesContainer) return;
+                    this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
+                });
+            },
+        };
+    }
+</script>
 </body>
 </html>

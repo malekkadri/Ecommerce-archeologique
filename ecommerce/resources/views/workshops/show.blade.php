@@ -56,6 +56,20 @@
             @else
                 <p class="mt-4 text-sm text-charcoal/70">{{ __('messages.login_to_order') }}</p>
             @endauth
+
+            <div class="mt-6 border-t border-sand/70 pt-5">
+                <h3 class="text-lg font-semibold">{{ __('messages.workshop_subscription_title') }}</h3>
+                <p class="text-sm text-charcoal/70 mt-1">{{ __('messages.workshop_subscription_hint') }}</p>
+                <form method="post" action="{{ route('workshops.subscribe') }}" class="mt-4 space-y-3">
+                    @csrf
+                    <input type="hidden" name="workshop_id" value="{{ $workshop->id }}">
+                    <input name="name" class="fo-input" placeholder="{{ __('messages.name') }}" value="{{ old('name', optional(auth()->user())->name) }}" required>
+                    <input name="email" type="email" class="fo-input" placeholder="Email" value="{{ old('email', optional(auth()->user())->email) }}" required>
+                    <input name="phone" class="fo-input" placeholder="{{ __('messages.phone') }}" value="{{ old('phone') }}">
+                    <input type="number" name="seats" min="1" max="10" value="{{ old('seats', 1) }}" class="fo-input" required>
+                    <button class="w-full fo-btn fo-btn-primary">{{ __('messages.workshop_subscription_cta') }}</button>
+                </form>
+            </div>
         </aside>
     </div>
 </section>

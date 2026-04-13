@@ -29,6 +29,7 @@ Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.
 
 Route::get('/workshops', [WorkshopController::class, 'index'])->name('workshops.index');
 Route::get('/workshops/{slug}', [WorkshopController::class, 'show'])->name('workshops.show');
+Route::post('/workshops/subscribe', [WorkshopController::class, 'subscribe'])->name('workshops.subscribe');
 
 Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace.index');
 Route::get('/marketplace/{slug}', [MarketplaceController::class, 'show'])->name('marketplace.show');

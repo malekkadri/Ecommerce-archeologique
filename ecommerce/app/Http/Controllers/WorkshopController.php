@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreWorkshopBookingRequest;
+use App\Http\Requests\StoreWorkshopSubscriptionRequest;
+use App\Mail\WorkshopSubscriptionConfirmation;
 use App\Models\Workshop;
 use App\Models\WorkshopBooking;
 use App\Services\WorkshopBookingService;
+use Illuminate\Support\Facades\Mail;
 
 class WorkshopController extends Controller
 {
@@ -31,6 +34,20 @@ class WorkshopController extends Controller
         }
 
         return back()->with('success', __('messages.booking_confirmed'));
+    }
+
+    public function subscribe(StoreWorkshopSubscriptionRequest $request, WorkshopBookingService $service)
+    {
+        $workshop = Workshop::findOrFail($request->workshop_id);
+        $subscription = $service->subscribe($workshop, $request->validated());
+
+        if (!$subscription) {
+            return back()->with('error', __('messages.booking_unavailable'));
+        }
+
+        Mail::to($subscription->email)->send(new WorkshopSubscriptionConfirmation($subscription));
+
+        return back()->with('success', __('messages.workshop_subscription_confirmed'));
     }
 
     public function history()

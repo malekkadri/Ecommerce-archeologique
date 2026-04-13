@@ -24,6 +24,11 @@ class Workshop extends Model
         return $this->hasMany(WorkshopBooking::class);
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(WorkshopSubscription::class);
+    }
+
     public function mediaGallery()
     {
         return $this->morphMany(EntityMedia::class, 'mediable')->orderBy('sort_order');

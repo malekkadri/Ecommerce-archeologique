@@ -148,7 +148,12 @@
                 <p class="text-xs uppercase tracking-wider text-slate-400">Back office</p>
                 <p class="font-semibold text-slate-900">@yield('admin_title', 'Admin')</p>
             </div>
-            <div class="text-sm text-slate-500">{{ now()->format('M d, Y') }}</div>
+            <div class="flex items-center gap-2 text-xs">
+                <a class="px-2 py-1 rounded {{ app()->getLocale() === 'fr' ? 'bg-[#C96A4A] text-white' : 'bg-slate-200 text-slate-700' }}" href="{{ route('locale.switch', 'fr') }}">FR</a>
+                <a class="px-2 py-1 rounded {{ app()->getLocale() === 'en' ? 'bg-[#C96A4A] text-white' : 'bg-slate-200 text-slate-700' }}" href="{{ route('locale.switch', 'en') }}">EN</a>
+                <a class="px-2 py-1 rounded {{ app()->getLocale() === 'ar' ? 'bg-[#C96A4A] text-white' : 'bg-slate-200 text-slate-700' }}" href="{{ route('locale.switch', 'ar') }}">AR</a>
+                <div class="text-sm text-slate-500 ml-2">{{ now()->format('M d, Y') }}</div>
+            </div>
         </div>
 
         @if($errors->any())

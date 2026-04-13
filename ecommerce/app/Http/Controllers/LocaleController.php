@@ -6,7 +6,7 @@ class LocaleController extends Controller
 {
     public function update($locale)
     {
-        if (!in_array($locale, ['fr', 'en'])) {
+        if (!in_array($locale, ['fr', 'en', 'ar'])) {
             abort(404);
         }
 

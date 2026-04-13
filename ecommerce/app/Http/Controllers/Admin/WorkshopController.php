@@ -116,12 +116,12 @@ class WorkshopController extends Controller
     private function fields(): array
     {
         return [
-            ['name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
+            ['name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true, 'translatable' => true],
             ['name' => 'slug', 'label' => 'Slug', 'type' => 'text'],
             ['name' => 'category_id', 'label' => 'Category', 'type' => 'select', 'options' => Category::where('type', 'workshop')->orderBy('name')->pluck('name', 'id')->toArray()],
-            ['name' => 'summary', 'label' => 'Summary', 'type' => 'textarea'],
-            ['name' => 'description', 'label' => 'Description', 'type' => 'textarea', 'required' => true],
-            ['name' => 'location', 'label' => 'Location', 'type' => 'text', 'required' => true],
+            ['name' => 'summary', 'label' => 'Summary', 'type' => 'textarea', 'translatable' => true],
+            ['name' => 'description', 'label' => 'Description', 'type' => 'textarea', 'required' => true, 'translatable' => true],
+            ['name' => 'location', 'label' => 'Location', 'type' => 'text', 'required' => true, 'translatable' => true],
             ['name' => 'starts_at', 'label' => 'Starts at', 'type' => 'datetime-local', 'required' => true],
             ['name' => 'ends_at', 'label' => 'Ends at', 'type' => 'datetime-local'],
             ['name' => 'capacity', 'label' => 'Capacity', 'type' => 'number', 'required' => true, 'min' => '1'],
@@ -136,12 +136,24 @@ class WorkshopController extends Controller
     private function validated(Request $request, ?Workshop $workshop = null): array
     {
         $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'array'],
+            'title.fr' => ['required', 'string', 'max:255'],
+            'title.en' => ['nullable', 'string', 'max:255'],
+            'title.ar' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'alpha_dash', Rule::unique('workshops', 'slug')->ignore(optional($workshop)->id)],
             'category_id' => ['nullable', 'exists:categories,id'],
-            'summary' => ['nullable', 'string'],
-            'description' => ['required', 'string'],
-            'location' => ['required', 'string', 'max:255'],
+            'summary' => ['nullable', 'array'],
+            'summary.fr' => ['nullable', 'string'],
+            'summary.en' => ['nullable', 'string'],
+            'summary.ar' => ['nullable', 'string'],
+            'description' => ['required', 'array'],
+            'description.fr' => ['required', 'string'],
+            'description.en' => ['nullable', 'string'],
+            'description.ar' => ['nullable', 'string'],
+            'location' => ['required', 'array'],
+            'location.fr' => ['required', 'string', 'max:255'],
+            'location.en' => ['nullable', 'string', 'max:255'],
+            'location.ar' => ['nullable', 'string', 'max:255'],
             'starts_at' => ['required', 'date'],
             'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
             'capacity' => ['required', 'integer', 'min:1'],
@@ -157,13 +169,28 @@ class WorkshopController extends Controller
         ]);
 
         if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']) . '-' . now()->format('His');
+            $defaultTitle = $data['title']['fr'] ?? $data['title']['en'] ?? 'workshop';
+            $data['slug'] = Str::slug($defaultTitle) . '-' . now()->format('His');
         }
+
+        $data['title'] = $this->encodeTranslations($data['title']);
+        $data['summary'] = $this->encodeTranslations($data['summary'] ?? []);
+        $data['description'] = $this->encodeTranslations($data['description']);
+        $data['location'] = $this->encodeTranslations($data['location']);
 
         $data['reserved_count'] = isset($data['reserved_count']) ? (int) $data['reserved_count'] : 0;
         $data['is_featured'] = $request->boolean('is_featured');
 
         return $data;
+    }
+
+    private function encodeTranslations(array $translations): string
+    {
+        return json_encode([
+            'fr' => trim((string) ($translations['fr'] ?? '')),
+            'en' => trim((string) ($translations['en'] ?? '')),
+            'ar' => trim((string) ($translations['ar'] ?? '')),
+        ], JSON_UNESCAPED_UNICODE);
     }
 
     private function persistUploads(Request $request, array &$data, ?Workshop $workshop = null): void

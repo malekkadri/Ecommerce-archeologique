@@ -105,13 +105,13 @@ class ContentController extends Controller
     private function fields(): array
     {
         return [
-            ['name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
+            ['name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true, 'translatable' => true],
             ['name' => 'slug', 'label' => 'Slug', 'type' => 'text'],
             ['name' => 'author_id', 'label' => 'Author', 'type' => 'select', 'required' => true, 'options' => User::orderBy('name')->pluck('name', 'id')->toArray()],
             ['name' => 'category_id', 'label' => 'Category', 'type' => 'select', 'options' => Category::where('type', 'content')->orderBy('name')->pluck('name', 'id')->toArray()],
             ['name' => 'type', 'label' => 'Type', 'type' => 'select', 'required' => true, 'options' => ['recipe' => 'Recipe', 'article' => 'Article', 'tradition' => 'Tradition', 'ingredient' => 'Ingredient', 'nutrition' => 'Nutrition']],
-            ['name' => 'excerpt', 'label' => 'Excerpt', 'type' => 'textarea'],
-            ['name' => 'body', 'label' => 'Body', 'type' => 'textarea', 'required' => true],
+            ['name' => 'excerpt', 'label' => 'Excerpt', 'type' => 'textarea', 'translatable' => true],
+            ['name' => 'body', 'label' => 'Body', 'type' => 'textarea', 'required' => true, 'translatable' => true],
             ['name' => 'featured_image', 'label' => 'Featured image', 'type' => 'image'],
             ['name' => 'published_at', 'label' => 'Published at', 'type' => 'datetime-local'],
             ['name' => 'is_featured', 'label' => 'Featured', 'type' => 'checkbox'],
@@ -121,13 +121,22 @@ class ContentController extends Controller
     private function validated(Request $request, ?Content $content = null): array
     {
         $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'array'],
+            'title.fr' => ['required', 'string', 'max:255'],
+            'title.en' => ['nullable', 'string', 'max:255'],
+            'title.ar' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'alpha_dash', Rule::unique('contents', 'slug')->ignore(optional($content)->id)],
             'author_id' => ['required', 'exists:users,id'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'type' => ['required', Rule::in(['recipe', 'article', 'tradition', 'ingredient', 'nutrition'])],
-            'excerpt' => ['nullable', 'string'],
-            'body' => ['required', 'string'],
+            'excerpt' => ['nullable', 'array'],
+            'excerpt.fr' => ['nullable', 'string'],
+            'excerpt.en' => ['nullable', 'string'],
+            'excerpt.ar' => ['nullable', 'string'],
+            'body' => ['required', 'array'],
+            'body.fr' => ['required', 'string'],
+            'body.en' => ['nullable', 'string'],
+            'body.ar' => ['nullable', 'string'],
             'featured_image' => ['nullable', 'image', 'max:4096'],
             'remove_image' => ['nullable', 'boolean'],
             'published_at' => ['nullable', 'date'],
@@ -135,8 +144,13 @@ class ContentController extends Controller
         ]);
 
         if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']) . '-' . now()->format('His');
+            $defaultTitle = $data['title']['fr'] ?? $data['title']['en'] ?? 'content';
+            $data['slug'] = Str::slug($defaultTitle) . '-' . now()->format('His');
         }
+
+        $data['title'] = $this->encodeTranslations($data['title']);
+        $data['excerpt'] = $this->encodeTranslations($data['excerpt'] ?? []);
+        $data['body'] = $this->encodeTranslations($data['body']);
 
         $data['is_featured'] = $request->boolean('is_featured');
 
@@ -156,5 +170,14 @@ class ContentController extends Controller
             }
             $data['featured_image'] = $request->file('featured_image')->store('contents', 'public');
         }
+    }
+
+    private function encodeTranslations(array $translations): string
+    {
+        return json_encode([
+            'fr' => trim((string) ($translations['fr'] ?? '')),
+            'en' => trim((string) ($translations['en'] ?? '')),
+            'ar' => trim((string) ($translations['ar'] ?? '')),
+        ], JSON_UNESCAPED_UNICODE);
     }
 }

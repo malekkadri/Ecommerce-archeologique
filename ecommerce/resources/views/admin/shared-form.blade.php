@@ -7,10 +7,25 @@
         <p class="admin-kicker">Edition</p>
         <h1 class="admin-title">{{ $title }}</h1>
     </div>
+    @php
+        $translationLocales = ['fr' => 'Français', 'en' => 'English', 'ar' => 'العربية'];
+        $hasTranslatableFields = collect($fields)->contains(fn ($field) => !empty($field['translatable']));
+    @endphp
 
     <form method="POST" enctype="multipart/form-data" action="{{ $method === 'POST' ? route($routePrefix . '.store') : route($routePrefix . '.update', $item) }}" class="admin-card p-6 grid md:grid-cols-2 gap-4">
         @csrf
         @if($method !== 'POST') @method($method) @endif
+        @if($hasTranslatableFields)
+            <div class="md:col-span-2 border border-slate-200 rounded-xl p-3 bg-slate-50">
+                <p class="text-xs uppercase tracking-wider text-slate-500 mb-2">Field language</p>
+                <input type="hidden" name="_admin_form_locale" value="{{ old('_admin_form_locale', app()->getLocale()) }}" data-language-target>
+                <div class="flex flex-wrap gap-2" data-language-tabs>
+                    @foreach($translationLocales as $localeCode => $localeLabel)
+                        <button type="button" data-locale-tab="{{ $localeCode }}" class="admin-btn admin-btn-secondary">{{ $localeLabel }}</button>
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
         @foreach($fields as $field)
             @php
@@ -48,7 +63,26 @@
                     @endif
                 @else
                     <label class="admin-label">{{ $field['label'] }}</label>
-                    @if($fieldType === 'select')
+                    @if(!empty($field['translatable']) && in_array($fieldType, ['text', 'textarea']))
+                        @php
+                            $storedTranslations = old($fieldName);
+                            if (!is_array($storedTranslations)) {
+                                $rawValue = $item->getRawOriginal($fieldName);
+                                $storedTranslations = is_string($rawValue) ? json_decode($rawValue, true) : [];
+                            }
+                            $storedTranslations = is_array($storedTranslations) ? $storedTranslations : [];
+                        @endphp
+                        @foreach($translationLocales as $localeCode => $localeLabel)
+                            <div data-translatable-panel="{{ $localeCode }}" style="display: none;">
+                                <label class="block text-xs text-slate-500 mb-1">{{ $localeLabel }}</label>
+                                @if($fieldType === 'textarea')
+                                    <textarea name="{{ $fieldName }}[{{ $localeCode }}]" rows="5" class="admin-input" @if($localeCode === 'ar') dir="rtl" @endif>{{ $storedTranslations[$localeCode] ?? '' }}</textarea>
+                                @else
+                                    <input type="{{ $fieldType }}" name="{{ $fieldName }}[{{ $localeCode }}]" value="{{ $storedTranslations[$localeCode] ?? '' }}" class="admin-input" @if($localeCode === 'ar') dir="rtl" @endif>
+                                @endif
+                            </div>
+                        @endforeach
+                    @elseif($fieldType === 'select')
                         <select name="{{ $fieldName }}" class="admin-input">
                             <option value="">--</option>
                             @foreach(($field['options'] ?? []) as $optionValue => $optionLabel)
@@ -70,4 +104,35 @@
         </div>
     </form>
 </section>
+@if($hasTranslatableFields)
+<script>
+    (() => {
+        const tabs = document.querySelectorAll('[data-locale-tab]');
+        const panels = document.querySelectorAll('[data-translatable-panel]');
+        const input = document.querySelector('[data-language-target]');
+        const available = ['fr', 'en', 'ar'];
+        let active = input?.value;
+        if (!available.includes(active)) active = 'fr';
+
+        const refresh = () => {
+            panels.forEach((panel) => {
+                panel.style.display = panel.dataset.translatablePanel === active ? '' : 'none';
+            });
+            tabs.forEach((tab) => {
+                const isActive = tab.dataset.localeTab === active;
+                tab.classList.toggle('admin-btn-primary', isActive);
+                tab.classList.toggle('admin-btn-secondary', !isActive);
+            });
+            if (input) input.value = active;
+        };
+
+        tabs.forEach((tab) => tab.addEventListener('click', () => {
+            active = tab.dataset.localeTab;
+            refresh();
+        }));
+
+        refresh();
+    })();
+</script>
+@endif
 @endsection

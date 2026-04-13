@@ -112,11 +112,11 @@ class CourseController extends Controller
     private function fields(): array
     {
         return [
-            ['name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],
+            ['name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true, 'translatable' => true],
             ['name' => 'slug', 'label' => 'Slug', 'type' => 'text'],
             ['name' => 'category_id', 'label' => 'Category', 'type' => 'select', 'options' => Category::where('type', 'course')->orderBy('name')->pluck('name', 'id')->toArray()],
-            ['name' => 'summary', 'label' => 'Summary', 'type' => 'textarea'],
-            ['name' => 'description', 'label' => 'Description', 'type' => 'textarea', 'required' => true],
+            ['name' => 'summary', 'label' => 'Summary', 'type' => 'textarea', 'translatable' => true],
+            ['name' => 'description', 'label' => 'Description', 'type' => 'textarea', 'required' => true, 'translatable' => true],
             ['name' => 'level', 'label' => 'Level', 'type' => 'select', 'required' => true, 'options' => ['beginner' => 'Beginner', 'intermediate' => 'Intermediate', 'advanced' => 'Advanced']],
             ['name' => 'price', 'label' => 'Price (TND)', 'type' => 'number', 'required' => true, 'step' => '0.01', 'min' => '0'],
             ['name' => 'image', 'label' => 'Primary image', 'type' => 'image'],
@@ -129,11 +129,20 @@ class CourseController extends Controller
     private function validated(Request $request, ?Course $course = null): array
     {
         $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'array'],
+            'title.fr' => ['required', 'string', 'max:255'],
+            'title.en' => ['nullable', 'string', 'max:255'],
+            'title.ar' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'alpha_dash', Rule::unique('courses', 'slug')->ignore(optional($course)->id)],
             'category_id' => ['nullable', 'exists:categories,id'],
-            'summary' => ['nullable', 'string'],
-            'description' => ['required', 'string'],
+            'summary' => ['nullable', 'array'],
+            'summary.fr' => ['nullable', 'string'],
+            'summary.en' => ['nullable', 'string'],
+            'summary.ar' => ['nullable', 'string'],
+            'description' => ['required', 'array'],
+            'description.fr' => ['required', 'string'],
+            'description.en' => ['nullable', 'string'],
+            'description.ar' => ['nullable', 'string'],
             'level' => ['required', Rule::in(['beginner', 'intermediate', 'advanced'])],
             'price' => ['required', 'numeric', 'min:0'],
             'image' => ['nullable', 'image', 'max:4096'],
@@ -147,13 +156,27 @@ class CourseController extends Controller
         ]);
 
         if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']) . '-' . now()->format('His');
+            $defaultTitle = $data['title']['fr'] ?? $data['title']['en'] ?? 'course';
+            $data['slug'] = Str::slug($defaultTitle) . '-' . now()->format('His');
         }
+
+        $data['title'] = $this->encodeTranslations($data['title']);
+        $data['summary'] = $this->encodeTranslations($data['summary'] ?? []);
+        $data['description'] = $this->encodeTranslations($data['description']);
 
         $data['is_published'] = $request->boolean('is_published', true);
         $data['is_featured'] = $request->boolean('is_featured');
 
         return $data;
+    }
+
+    private function encodeTranslations(array $translations): string
+    {
+        return json_encode([
+            'fr' => trim((string) ($translations['fr'] ?? '')),
+            'en' => trim((string) ($translations['en'] ?? '')),
+            'ar' => trim((string) ($translations['ar'] ?? '')),
+        ], JSON_UNESCAPED_UNICODE);
     }
 
     private function persistUploads(Request $request, array &$data, ?Course $course = null): void
